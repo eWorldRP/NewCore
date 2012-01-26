@@ -318,11 +318,43 @@ public:
 };
 
 /*######
+## npc_dame_evniki_kapsalis
+######*/
+
+enum eDameEnvikiKapsalis
+{
+    TITLE_CRUSADER    = 123
+};
+
+class npc_dame_evniki_kapsalis : public CreatureScript
+{
+public:
+    npc_dame_evniki_kapsalis() : CreatureScript("npc_dame_evniki_kapsalis") { }
+
+    bool OnGossipHello(Player* pPlayer, Creature* pCreature)
+    {
+        if (pPlayer->HasTitle(TITLE_CRUSADER))
+            pPlayer->ADD_GOSSIP_ITEM(GOSSIP_ICON_VENDOR, GOSSIP_TEXT_BROWSE_GOODS, GOSSIP_SENDER_MAIN, GOSSIP_ACTION_TRADE);
+
+        pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* pPlayer, Creature* pCreature, uint32 /*uiSender*/, uint32 uiAction)
+    {
+        pPlayer->PlayerTalkClass->ClearMenus();
+        if (uiAction == GOSSIP_ACTION_TRADE)
+            pPlayer->GetSession()->SendListInventory(pCreature->GetGUID());
+        return true;
+    }
+};
+
+/*######
 * npc_quest_givers_for_crusaders
 UPDATE `creature_template` SET `ScriptName`='npc_quest_givers_for_crusaders' WHERE `entry` IN (34882, 35094);
 ######*/
 
-/*class npc_quest_givers_for_crusaders : public CreatureScript
+class npc_quest_givers_for_crusaders : public CreatureScript
 {
 public:
     npc_quest_givers_for_crusaders() : CreatureScript("npc_quest_givers_for_crusaders") { }
@@ -336,7 +368,7 @@ public:
         pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
         return true;
     }
-};*/
+};
 
 /*######
 ## npc_squire_david
@@ -2803,39 +2835,6 @@ public:
     }
 };
 
-class spell_tournament_duel : public SpellScriptLoader
-{
-public:
-    spell_tournament_duel() : SpellScriptLoader("spell_tournament_duel") { }
-
-    class spell_tournament_duel_SpellScript : public SpellScript
-    {
-        PrepareSpellScript(spell_tournament_duel_SpellScript);
-
-        void HandleEffectScriptEffect(SpellEffIndex /*effIndex*/)
-        {
-            if (Unit* pTarget = GetHitUnit())
-            {
-                if (pTarget->GetTypeId() != TYPEID_PLAYER)
-                    return;
-
-                if (Unit *caster = GetCaster()->GetCharmerOrOwner())
-                    caster->CastSpell(pTarget,62875,true);
-            }
-        }
-
-        void Register()
-        {
-            OnEffectHitTarget += SpellEffectFn(spell_tournament_duel_SpellScript::HandleEffectScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-        }
-    };
-
-    SpellScript *GetSpellScript() const
-    {
-        return new spell_tournament_duel_SpellScript();
-    }
-};
-
 enum BlackKnightOrders
 {
   QUEST_THE_BLACK_KNIGHT_ORDERS = 13663,
@@ -2968,12 +2967,12 @@ void AddSC_Argen_Tournament()
 {
     new npc_chillmaw;
     new spell_tournament_melee;
-    new spell_tournament_duel;
+    new npc_dame_evniki_kapsalis;
     new npc_squire_david;
     new npc_argent_valiant;
     new npc_vendor_argent_tournament;
     new quest_givers_argent_tournament;
-    /*new npc_quest_givers_for_crusaders;*/
+    new npc_quest_givers_for_crusaders;
     new npc_justicar_mariel_trueheart;
     new npc_crusader_rhydalla;
     new npc_eadric_the_pure;
