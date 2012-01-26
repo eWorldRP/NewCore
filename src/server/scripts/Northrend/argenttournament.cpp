@@ -322,7 +322,7 @@ public:
 UPDATE `creature_template` SET `ScriptName`='npc_quest_givers_for_crusaders' WHERE `entry` IN (34882, 35094);
 ######*/
 
-class npc_quest_givers_for_crusaders : public CreatureScript
+/*class npc_quest_givers_for_crusaders : public CreatureScript
 {
 public:
     npc_quest_givers_for_crusaders() : CreatureScript("npc_quest_givers_for_crusaders") { }
@@ -336,7 +336,7 @@ public:
         pPlayer->SEND_GOSSIP_MENU(pPlayer->GetGossipTextId(pCreature), pCreature->GetGUID());
         return true;
     }
-};
+};*/
 
 /*######
 ## npc_squire_david
@@ -2973,7 +2973,7 @@ void AddSC_Argen_Tournament()
     new npc_argent_valiant;
     new npc_vendor_argent_tournament;
     new quest_givers_argent_tournament;
-    new npc_quest_givers_for_crusaders;
+    /*new npc_quest_givers_for_crusaders;*/
     new npc_justicar_mariel_trueheart;
     new npc_crusader_rhydalla;
     new npc_eadric_the_pure;

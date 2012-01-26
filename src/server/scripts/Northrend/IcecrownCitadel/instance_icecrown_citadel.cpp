@@ -108,7 +108,7 @@ class instance_icecrown_citadel : public InstanceMapScript
                 // Gunship Battle
                 FirstSquadState = 0;
                 SecondSquadState = 0;
-                SpireSquadState = 0;
+//                SpireSquadState = 0;
                 SkybreakerBossGUID = 0;
                 OrgrimmarBossGUID = 0;
                 DeathbringerSaurfangGbGUID = 0;
@@ -116,7 +116,7 @@ class instance_icecrown_citadel : public InstanceMapScript
                 DeathbringerSaurfangNotVisualGUID = 0;
                 MuradinBronzebeardNotVisualGUID = 0;
                 GbBattleMageGUID = 0;
-                // End Gunship Battle
+                // Gunship Battle
                 DeathbringerSaurfangGUID = 0;
                 DeathbringerSaurfangDoorGUID = 0;
                 DeathbringerSaurfangEventGUID = 0;
@@ -178,7 +178,6 @@ class instance_icecrown_citadel : public InstanceMapScript
                 if (!TeamInInstance)
                     TeamInInstance = player->GetTeam();
 
-                PrepareGunshipEvent(); // Spawn Gunship Event
             }
 
             void OnCreatureCreate(Creature* creature)
@@ -689,6 +688,7 @@ class instance_icecrown_citadel : public InstanceMapScript
                                 elevator->SetUInt32Value(GAMEOBJECT_LEVEL, 0);
                                 elevator->SetGoState(GO_STATE_READY);
                             }
+                        PrepareGunshipEvent(); // Spawn Gunship Event
                         }
                         break;
                     case DATA_DEATHBRINGER_SAURFANG:
@@ -1479,7 +1479,7 @@ class instance_icecrown_citadel : public InstanceMapScript
                 isPrepared = true;
             }
 
-         protected:
+        protected:
             EventMap Events;
             uint64 LadyDeathwisperElevatorGUID;
             // Gunship battle
