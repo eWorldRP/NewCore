@@ -119,7 +119,10 @@ enum Events
     // Aerial Command Unit
     EVENT_PLASMA_BALL,
     EVENT_REACTIVATE_AERIAL,
-    EVENT_SUMMON_BOTS
+    EVENT_SUMMON_BOTS,
+
+    // Temporary
+    EVENT_RELOCATE
 };
 
 enum Phases
@@ -399,9 +402,10 @@ class boss_mimiron : public CreatureScript
                                 VX_001->getStandState() == UNIT_STAND_STATE_DEAD &&
                                 AerialUnit->getStandState() == UNIT_STAND_STATE_DEAD)
                             {
-                                Leviathan->DisappearAndDie();
+                                Leviathan->DespawnOrUnsummon(5*MINUTE*IN_MILLISECONDS);
                                 VX_001->DisappearAndDie();
                                 AerialUnit->DisappearAndDie();
+                                me->Kill(Leviathan);
                                 DespawnCreatures(NPC_FLAMES_INITIAL, 100.0f);
                                 DespawnCreatures(NPC_PROXIMITY_MINE, 100.0f);
                                 DespawnCreatures(NPC_ROCKET, 100);
@@ -769,7 +773,6 @@ public:
 
         Vehicle* vehicle;
         Phases phase;
-        EventMap events;
         bool MimironHardMode;
 
         void Reset()
@@ -783,7 +786,7 @@ public:
             events.SetPhase(PHASE_NULL);
             MimironHardMode = false;
 
-            if (Creature *turret = CAST_CRE(me->GetVehicleKit()->GetPassenger(3)))
+            if (Creature* turret = CAST_CRE(me->GetVehicleKit()->GetPassenger(3)))
             {
                 turret->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_ATTACKABLE_1);
                 turret->SetReactState(REACT_PASSIVE);
@@ -888,6 +891,7 @@ public:
                     events.SetPhase(PHASE_LEVIATHAN_ASSEMBLED);
                     events.RescheduleEvent(EVENT_PROXIMITY_MINE, 1000);
                     events.RescheduleEvent(EVENT_SHOCK_BLAST, 30000);
+                    events.ScheduleEvent(EVENT_RELOCATE, 1000);
                     break;
                 case DO_ENTER_ENRAGE:
                     DoCast(me, SPELL_BERSERK, true);
@@ -912,6 +916,10 @@ public:
                 {
                     switch (eventId)
                     {
+                        case EVENT_RELOCATE:
+                            me->GetVehicleKit()->RelocatePassengers(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
+                            events.ScheduleEvent(EVENT_RELOCATE, 1000);
+                            break;
                         case EVENT_PROXIMITY_MINE:
                             for (int i = 0; i < 10; ++i)
                                 DoCast(SPELL_MINES_SPAWN);
@@ -981,9 +989,7 @@ class boss_leviathan_mk_turret : public CreatureScript
                     if (playerList.empty())
                         return NULL;
 
-                    std::list<Player*>::const_iterator itr = playerList.begin();
-                    std::advance(itr, urand(0, playerList.size() - 1));
-                    return *itr;
+                    return SelectRandomContainerElement(playerList);
                 }
                 else
                     return NULL;
@@ -1089,7 +1095,6 @@ public:
         }
 
         Phases phase;
-        EventMap events;
         bool MimironHardMode;
 
         bool spinning;
@@ -1171,6 +1176,7 @@ public:
                     events.RescheduleEvent(EVENT_LASER_BARRAGE, urand(35000, 40000));
                     events.RescheduleEvent(EVENT_ROCKET_STRIKE, 20000);
                     events.RescheduleEvent(EVENT_HAND_PULSE, 15000, 0, PHASE_VX001_ASSEMBLED);
+                    events.ScheduleEvent(EVENT_RELOCATE, 1000);
                     if (MimironHardMode)
                     {
                         DoCast(me, SPELL_EMERGENCY_MODE, true);
@@ -1263,6 +1269,10 @@ public:
                 {
                     switch (eventId)
                     {
+                        case EVENT_RELOCATE:
+                            me->GetVehicleKit()->RelocatePassengers(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
+                            events.ScheduleEvent(EVENT_RELOCATE, 1000);
+                            break;
                         case EVENT_RAPID_BURST:
                             if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100, true))
                                 if (Creature* BurstTarget = me->SummonCreature(NPC_BURST_TARGET, *target, TEMPSUMMON_TIMED_DESPAWN, 3100))
@@ -1317,9 +1327,7 @@ public:
                             me->GetCreatureListWithEntryInGrid(_flames, NPC_FLAME_SPREAD, 150.0f);
                             if (!_flames.empty())
                             {
-                                std::list<Creature*>::iterator itr = _flames.begin();
-                                std::advance(itr, urand(0, _flames.size() - 1));
-                                if (Creature* flame = (*itr))
+                                if (Creature* flame = SelectRandomContainerElement(_flames))
                                     me->SummonCreature(NPC_FROST_BOMB, *flame, TEMPSUMMON_TIMED_DESPAWN, 11000);
                             }
                             else
@@ -1424,7 +1432,6 @@ public:
         }
 
         Phases phase;
-        EventMap events;
         bool MimironHardMode;
         uint8 spawnedAdds;
 
@@ -1653,13 +1660,12 @@ class npc_magnetic_core : public CreatureScript
         {
             npc_magnetic_coreAI(Creature* creature) : Scripted_NoMovementAI(creature)
             {
-                DoCast(SPELL_MAGNETIC_CORE);
                 me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_PACIFIED);
                 me->ForcedDespawn(21000);
                 if (Creature* AerialUnit = me->FindNearestCreature(NPC_AERIAL_COMMAND_UNIT, 100.0f, true))
                 {
                     AerialUnit->AI()->DoAction(DO_DISABLE_AERIAL);
-                    me->GetMotionMaster()->MoveFall(364.314f);
+                    me->GetMotionMaster()->MoveFall();
                 }
             }
         };
