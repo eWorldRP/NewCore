@@ -176,7 +176,7 @@ void Vehicle::ApplyAllImmunities()
         case 160: // Strand of the Ancients
         case 244: // Wintergrasp
         case 510: // Isle of Conquest
-            _me->SetControlled(true, UNIT_STAT_ROOT);
+            _me->SetControlled(true, UNIT_STATE_ROOT);
             // why we need to apply this? we can simple add immunities to slow mechanic in DB
             _me->ApplySpellImmune(0, IMMUNITY_STATE, SPELL_AURA_MOD_DECREASE_SPEED, true);
             break;
@@ -342,7 +342,7 @@ bool Vehicle::AddPassenger(Unit* unit, int8 seatId)
     }
 
     if (seat->second.SeatInfo->m_flags && !(seat->second.SeatInfo->m_flags & VEHICLE_SEAT_FLAG_UNK1))
-        unit->AddUnitState(UNIT_STAT_ONVEHICLE);
+        unit->AddUnitState(UNIT_STATE_ONVEHICLE);
 
     unit->AddUnitMovementFlag(MOVEMENTFLAG_ONTRANSPORT);
     VehicleSeatEntry const* veSeat = seat->second.SeatInfo;
@@ -364,7 +364,7 @@ bool Vehicle::AddPassenger(Unit* unit, int8 seatId)
     if (_me->IsInWorld())
     {
         unit->SendClearTarget();                                // SMSG_BREAK_TARGET
-        unit->SetControlled(true, UNIT_STAT_ROOT);              // SMSG_FORCE_ROOT - In some cases we send SMSG_SPLINE_MOVE_ROOT here (for creatures)
+        unit->SetControlled(true, UNIT_STATE_ROOT);              // SMSG_FORCE_ROOT - In some cases we send SMSG_SPLINE_MOVE_ROOT here (for creatures)
                                                                 // also adds MOVEMENTFLAG_ROOT
         unit->SendMonsterMoveTransport(_me);                     // SMSG_MONSTER_MOVE_TRANSPORT
 
@@ -407,7 +407,7 @@ void Vehicle::RemovePassenger(Unit* unit)
         ++_usableSeatNum;
     }
 
-    unit->ClearUnitState(UNIT_STAT_ONVEHICLE);
+    unit->ClearUnitState(UNIT_STATE_ONVEHICLE);
 
     if (_me->GetTypeId() == TYPEID_UNIT && unit->GetTypeId() == TYPEID_PLAYER && seat->first == 0 && seat->second.SeatInfo->m_flags & VEHICLE_SEAT_FLAG_CAN_CONTROL)
         _me->RemoveCharmedBy(unit);
@@ -507,30 +507,4 @@ uint8 Vehicle::GetAvailableSeatCount() const
             ++ret;
 
     return ret;
-}
-
-void Vehicle::Relocate(Position pos)
-{
-    sLog->outDebug(LOG_FILTER_VEHICLES, "Vehicle::Relocate %u", _me->GetEntry());
-
-    std::set<Unit*> vehiclePlayers;
-    for (int8 i = 0; i < 8; i++)
-        vehiclePlayers.insert(GetPassenger(i));
-
-    // passengers should be removed or they will have movement stuck
-    RemoveAllPassengers();
-
-    for (std::set<Unit*>::const_iterator itr = vehiclePlayers.begin(); itr != vehiclePlayers.end(); ++itr)
-    {
-        if (Unit* plr = (*itr))
-        {
-            // relocate/setposition doesn't work for player
-            plr->NearTeleportTo(pos.GetPositionX(), pos.GetPositionY(), pos.GetPositionZ(), pos.GetOrientation());
-            //plr->TeleportTo(pPlayer->GetMapId(), triggerPos.GetPositionX(), triggerPos.GetPositionY(), triggerPos.GetPositionZ(), triggerPos.GetOrientation(), TELE_TO_NOT_LEAVE_COMBAT);
-        }
-    }
-
-    _me->UpdatePosition(pos, true);
-    // problems, and impossible to do delayed enter
-    //pPlayer->EnterVehicle(veh);
 }

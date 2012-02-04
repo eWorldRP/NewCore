@@ -29,7 +29,6 @@
 #include "DatabaseEnv.h"
 #include "World.h"
 #include "WorldPacket.h"
-#include "Cryptography/BigNumber.h"
 
 struct ItemTemplate;
 struct AuctionEntry;
@@ -47,7 +46,6 @@ class WorldPacket;
 class WorldSocket;
 class LoginQueryHolder;
 class SpellCastTargets;
-class Warden;
 struct AreaTableEntry;
 struct LfgJoinResultData;
 struct LfgLockStatus;
@@ -213,7 +211,7 @@ class CharacterCreateInfo
 class WorldSession
 {
     public:
-        WorldSession(uint32 id, WorldSocket* sock, AccountTypes sec, bool ispremium, uint8 expansion, time_t mute_time, LocaleConstant locale, uint32 recruiter, bool isARecruiter);
+        WorldSession(uint32 id, WorldSocket* sock, AccountTypes sec, uint8 expansion, time_t mute_time, LocaleConstant locale, uint32 recruiter, bool isARecruiter);
         ~WorldSession();
 
         bool PlayerLoading() const { return m_playerLoading; }
@@ -241,17 +239,14 @@ class WorldSession
         void SendClientCacheVersion(uint32 version);
 
         AccountTypes GetSecurity() const { return _security; }
-        bool IsPremium() const { return _ispremium; }
         uint32 GetAccountId() const { return _accountId; }
         Player* GetPlayer() const { return _player; }
         char const* GetPlayerName() const;
-        uint32 GetGuidLow() const;
         void SetSecurity(AccountTypes security) { _security = security; }
         std::string const& GetRemoteAddress() { return m_Address; }
         void SetPlayer(Player* player);
         uint8 Expansion() const { return m_expansion; }
 
-        void InitWarden(BigNumber* k, std::string os);
         /// Session in auth.queue currently
         void SetInQueue(bool state) { m_inQueue = state; }
 
@@ -330,7 +325,6 @@ class WorldSession
             }
         }
         //used with item_page table
-        static void SendExternalMails();
         bool SendItemInfo(uint32 itemid, WorldPacket data);
         //auction
         void SendAuctionHello(uint64 guid, Creature* unit);
@@ -494,7 +488,6 @@ class WorldSession
         void HandleSetActionButtonOpcode(WorldPacket& recvPacket);
 
         void HandleGameObjectUseOpcode(WorldPacket& recPacket);
-        void HandleMeetingStoneInfo(WorldPacket& recPacket);
         void HandleGameobjectReportUse(WorldPacket& recvPacket);
 
         void HandleNameQueryOpcode(WorldPacket& recvPacket);
@@ -937,12 +930,9 @@ class WorldSession
         AccountTypes _security;
         uint32 _accountId;
         uint8 m_expansion;
-        bool _ispremium;
 
         typedef std::list<AddonInfo> AddonsList;
 
-        // Warden
-        Warden* _warden;                                    // Remains NULL if Warden system is not enabled by config
         time_t _logoutTime;
         bool m_inQueue;                                     // session wait in auth.queue
         bool m_playerLoading;                               // code processed in LoginPlayer

@@ -778,7 +778,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     //uint8 expansion = 0;
     LocaleConstant locale;
     std::string account;
-    bool isPremium = false;
     SHA1Hash sha1;
     BigNumber v, s, g, N;
     WorldPacket packet, SendAddonPacked;
@@ -828,8 +827,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
                                 "expansion, "               //6
                                 "mutetime, "                //7
                                 "locale, "                  //8
-                                "recruiter, "               //9
-                                "os "                       //10
+                                "recruiter "                //9
                                 "FROM account "
                                 "WHERE username = '%s'",
                                 safe_account.c_str());
@@ -905,7 +903,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
         locale = LOCALE_enUS;
 
     uint32 recruiter = fields[9].GetUInt32();
-    std::string os = fields[10].GetString();
 
     // Checks gmlevel per Realm
     result =
@@ -942,16 +939,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
         return -1;
     }
 
-    QueryResult premresult =
-        LoginDatabase.PQuery ("SELECT 1 "
-                                "FROM account_premium "
-                                "WHERE id = '%u' "
-                                "AND active = 1",
-                                id);
-    if (premresult) // if account premium
-    {
-        isPremium = true;
-    }
     // Check locked state for server
     AccountTypes allowedAccountType = sWorld->GetPlayerSecurityLimit();
     sLog->outDebug(LOG_FILTER_NETWORKIO, "Allowed Level: %u Player Level %u", allowedAccountType, AccountTypes(security));
@@ -1013,7 +1000,7 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     LoginDatabase.Execute(stmt);
 
     // NOTE ATM the socket is single-threaded, have this in mind ...
-    ACE_NEW_RETURN (m_Session, WorldSession (id, this, AccountTypes(security), isPremium, expansion, mutetime, locale, recruiter, isRecruiter), -1);
+    ACE_NEW_RETURN (m_Session, WorldSession (id, this, AccountTypes(security), expansion, mutetime, locale, recruiter, isRecruiter), -1);
 
     m_Crypt.Init(&K);
 
@@ -1021,9 +1008,6 @@ int WorldSocket::HandleAuthSession (WorldPacket& recvPacket)
     m_Session->LoadTutorialsData();
     m_Session->ReadAddonsInfo(recvPacket);
 
-    // Initialize Warden system only if it is enabled by config
-    if (sWorld->getBoolConfig(CONFIG_BOOL_WARDEN_ENABLED))
-        m_Session->InitWarden(&K, os);
     // Sleep this Network thread for
     uint32 sleepTime = sWorld->getIntConfig(CONFIG_SESSION_ADD_DELAY);
     ACE_OS::sleep (ACE_Time_Value (0, sleepTime));

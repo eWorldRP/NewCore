@@ -357,22 +357,6 @@ void Aura::_InitEffects(uint8 effMask, Unit* caster, int32 *baseAmount)
         else
             m_effects[i] = NULL;
     }
-
-    // Mixology
-    if (m_spellInfo->SpellFamilyName == SPELLFAMILY_POTION && caster /*&& caster->IsPlayer()*/ && caster->HasAura(53042))
-    {
-        if (sSpellMgr->IsSpellMemberOfSpellGroup(m_spellInfo->Id, SPELL_GROUP_ELIXIR_BATTLE) ||
-            sSpellMgr->IsSpellMemberOfSpellGroup(m_spellInfo->Id, SPELL_GROUP_ELIXIR_GUARDIAN))
-        {
-            m_maxDuration *= 2;
-            m_duration = m_maxDuration;
-            for (uint8 i = 0 ; i < MAX_SPELL_EFFECTS; ++i)
-            {
-                if (effMask & (uint8(1) << i))
-                    m_effects[i]->SetAmount((int32)(m_effects[i]->GetAmount() * 1.3f));
-            }
-        }
-    }
 }
 
 Aura::~Aura()
@@ -1871,7 +1855,7 @@ bool Aura::CanStackWith(Aura const* existingAura) const
                 case SPELL_AURA_OBS_MOD_HEALTH:
                 case SPELL_AURA_PERIODIC_TRIGGER_SPELL_WITH_VALUE:
                     // periodic auras which target areas are not allowed to stack this way (replenishment for example)
-                    if (m_spellInfo->Effects[i].IsArea() || existingSpellInfo->Effects[i].IsArea())
+                    if (m_spellInfo->Effects[i].IsTargetingArea() || existingSpellInfo->Effects[i].IsTargetingArea())
                         break;
                     return true;
                 default:
@@ -2358,7 +2342,7 @@ void UnitAura::FillTargetMap(std::map<Unit*, uint8> & targets, Unit* caster)
         {
             float radius = GetSpellInfo()->Effects[effIndex].CalcRadius(caster);
 
-            if (!GetUnitOwner()->HasUnitState(UNIT_STAT_ISOLATED))
+            if (!GetUnitOwner()->HasUnitState(UNIT_STATE_ISOLATED))
             {
                 switch (GetSpellInfo()->Effects[effIndex].Effect)
                 {

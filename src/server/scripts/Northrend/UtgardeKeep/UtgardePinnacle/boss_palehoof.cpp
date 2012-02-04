@@ -49,6 +49,7 @@ enum Yells
     SAY_AGGRO                                = -1575000,
     SAY_SLAY_1                               = -1575001,
     SAY_SLAY_2                               = -1575002,
+    SAY_DEATH                                = -1575003
 };
 
 enum Creatures
@@ -151,9 +152,8 @@ public:
             }
         }
 
-        void EnterCombat(Unit* who)
+        void EnterCombat(Unit* /*who*/)
         {
-            me->GetMotionMaster()->MoveChase(who);
             DoScriptText(SAY_AGGRO, me);
         }
 
@@ -211,6 +211,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
+            DoScriptText(SAY_DEATH, me);
             if (instance)
                 instance->SetData(DATA_GORTOK_PALEHOOF_EVENT, DONE);
             Creature* temp = Unit::GetCreature((*me), instance ? instance->GetData64(DATA_MOB_ORB) : 0);
@@ -267,7 +268,7 @@ public:
 
         void JustReachedHome()
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NOT_ATTACKABLE_1|UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE|UNIT_FLAG_NOT_SELECTABLE|UNIT_FLAG_NOT_ATTACKABLE_1|UNIT_FLAG_IMMUNE_TO_PC);
             me->SetStandState(UNIT_STAND_STATE_STAND);
             DoCast(me, SPELL_FREEZE);
         }
@@ -322,11 +323,6 @@ public:
                     if (pPalehoof && pPalehoof->isAlive())
                         CAST_AI(boss_palehoof::boss_palehoofAI, pPalehoof->AI())->Reset();
                 }
-        }
-
-        void EnterCombat(Unit* who)
-        {
-            me->GetMotionMaster()->MoveChase(who);
         }
 
         void UpdateAI(const uint32 diff)
@@ -385,7 +381,7 @@ public:
 
         void JustReachedHome()
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_IMMUNE_TO_PC);
             me->SetStandState(UNIT_STAND_STATE_STAND);
             DoCast(me, SPELL_FREEZE);
         }
@@ -440,11 +436,6 @@ public:
                     if (pPalehoof && pPalehoof->isAlive())
                         CAST_AI(boss_palehoof::boss_palehoofAI, pPalehoof->AI())->Reset();
                 }
-        }
-
-        void EnterCombat(Unit* who)
-        {
-            me->GetMotionMaster()->MoveChase(who);
         }
 
         void UpdateAI(const uint32 diff)
@@ -505,7 +496,7 @@ public:
 
         void JustReachedHome()
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_IMMUNE_TO_PC);
             me->SetStandState(UNIT_STAND_STATE_STAND);
             DoCast(me, SPELL_FREEZE);
         }
@@ -561,11 +552,6 @@ public:
                     if (pPalehoof && pPalehoof->isAlive())
                         CAST_AI(boss_palehoof::boss_palehoofAI, pPalehoof->AI())->Reset();
                 }
-        }
-
-        void EnterCombat(Unit* who)
-        {
-            me->GetMotionMaster()->MoveChase(who);
         }
 
         void UpdateAI(const uint32 diff)
@@ -625,7 +611,7 @@ public:
 
         void JustReachedHome()
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_IMMUNE_TO_PC);
             me->SetStandState(UNIT_STAND_STATE_STAND);
             DoCast(me, SPELL_FREEZE);
         }
@@ -688,11 +674,6 @@ public:
                 }
         }
 
-        void EnterCombat(Unit* who)
-        {
-            me->GetMotionMaster()->MoveChase(who);
-        }
-
         void UpdateAI(const uint32 diff)
         {
             //Return since we have no target
@@ -751,7 +732,7 @@ public:
 
         void JustReachedHome()
         {
-            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_IMMUNE_TO_PC);
             me->SetStandState(UNIT_STAND_STATE_STAND);
             DoCast(me, SPELL_FREEZE);
         }
@@ -812,7 +793,7 @@ public:
                    if (pNext)
                    {
                         pNext->RemoveAurasDueToSpell(SPELL_FREEZE);
-                        pNext->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_OOC_NOT_ATTACKABLE);
+                        pNext->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_ATTACKABLE_1 | UNIT_FLAG_IMMUNE_TO_PC);
                         pNext->SetStandState(UNIT_STAND_STATE_STAND);
                         pNext->SetInCombatWithZone();
                         pNext->Attack(pNext->SelectNearestTarget(100), true);
@@ -862,10 +843,6 @@ public:
         {
             pGO->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
             pGO->SetGoState(GO_STATE_ACTIVE);
-
-            if(InstanceScript* instance = pGO->GetInstanceScript())
-                if(instance->GetData(DATA_GORTOK_PALEHOOF_EVENT) == IN_PROGRESS)
-                    return true;
 
             CAST_AI(boss_palehoof::boss_palehoofAI, pPalehoof->AI())->NextPhase();
         }

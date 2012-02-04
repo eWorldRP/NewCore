@@ -146,7 +146,7 @@ public:
                     if (m_auiEncounter[2] == DONE)
                         go->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                     break;
-                case GO_TRIBUNAL_SKYROOM_FLOOR:
+                case 191527:
                     uiTribunalSkyFloor = go->GetGUID();
                     break;
             }
@@ -156,15 +156,18 @@ public:
         {
             switch (type)
             {
+                case DATA_MAIDEN_OF_GRIEF_EVENT:
+                    m_auiEncounter[1] = data;
+                    if (m_auiEncounter[1] == DONE)
+                        HandleGameObject(uiBrannDoor, true);
+                    break;
                 case DATA_KRYSTALLUS_EVENT:
                     m_auiEncounter[0] = data;
                     if (m_auiEncounter[0] == DONE)
                         HandleGameObject(uiMaidenOfGriefDoor, true);
                     break;
-                case DATA_MAIDEN_OF_GRIEF_EVENT:
-                    m_auiEncounter[1] = data;
-                    if (m_auiEncounter[1] == DONE)
-                        HandleGameObject(uiBrannDoor, true);
+                case DATA_SJONNIR_EVENT:
+                    m_auiEncounter[3] = data;
                     break;
                 case DATA_BRANN_EVENT:
                     m_auiEncounter[2] = data;
@@ -175,9 +178,6 @@ public:
                         if (go)
                             go->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_INTERACT_COND);
                     }
-                    break;
-                case DATA_SJONNIR_EVENT:
-                    m_auiEncounter[3] = data;
                     break;
             }
 
@@ -191,8 +191,8 @@ public:
             {
                 case DATA_KRYSTALLUS_EVENT:                return m_auiEncounter[0];
                 case DATA_MAIDEN_OF_GRIEF_EVENT:           return m_auiEncounter[1];
-                case DATA_BRANN_EVENT:                     return m_auiEncounter[2];
-                case DATA_SJONNIR_EVENT:                   return m_auiEncounter[3];
+                case DATA_SJONNIR_EVENT:                   return m_auiEncounter[2];
+                case DATA_BRANN_EVENT:                     return m_auiEncounter[3];
             }
 
             return 0;

@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "AnticheatMgr.h"
 #include "ScriptLoader.h"
 
 //examples
@@ -44,7 +43,6 @@ void AddSC_example_spell_scripts();
 void AddSC_SmartSCripts();
 
 //Commands
-void AddSC_anticheat_commandscript();
 void AddSC_account_commandscript();
 void AddSC_achievement_commandscript();
 void AddSC_debug_commandscript();
@@ -423,16 +421,12 @@ void AddSC_boss_razorscale();
 void AddSC_boss_xt002();
 void AddSC_boss_kologarn();
 void AddSC_boss_assembly_of_iron();
-void AddSC_boss_freya();
-void AddSC_boss_mimiron();
-void AddSC_boss_thorim();
-void AddSC_boss_hodir();
 void AddSC_boss_general_vezax();
 void AddSC_ulduar_teleporter();
+void AddSC_boss_mimiron();
 void AddSC_boss_hodir();
+void AddSC_boss_freya();
 void AddSC_instance_ulduar();
-void AddSC_boss_yoggsaron();
-void AddSC_boss_algalon();
 void AddSC_boss_keleseth();              //Utgarde Keep
 void AddSC_boss_skarvald_dalronn();
 void AddSC_boss_ingvar_the_plunderer();
@@ -475,11 +469,9 @@ void AddSC_instance_halls_of_reflection();   // Halls of Reflection
 void AddSC_halls_of_reflection();
 void AddSC_boss_falric();
 void AddSC_boss_marwyn();
-void AddSC_boss_lich_king_hr();
 void AddSC_boss_lord_marrowgar();       // Icecrown Citadel
 void AddSC_boss_lady_deathwhisper();
 void AddSC_boss_deathbringer_saurfang();
-void AddSC_boss_gunship_battle();
 void AddSC_boss_festergut();
 void AddSC_boss_rotface();
 void AddSC_boss_professor_putricide();
@@ -493,10 +485,9 @@ void AddSC_instance_icecrown_citadel();
 void AddSC_icecrown_citadel();
 void AddSC_instance_ruby_sanctum();      // Ruby Sanctum
 void AddSC_ruby_sanctum();
-void AddSC_boss_baltharus();
-void AddSC_boss_ragefire();
-void AddSC_boss_zarithrian();
-void AddSC_boss_halion();
+void AddSC_boss_baltharus_the_warborn();
+void AddSC_boss_saviana_ragefire();
+void AddSC_boss_general_zarithrian();
 
 void AddSC_dalaran();
 void AddSC_borean_tundra();
@@ -509,8 +500,6 @@ void AddSC_storm_peaks();
 void AddSC_zuldrak();
 void AddSC_crystalsong_forest();
 void AddSC_isle_of_conquest();
-void AddSC_wintergrasp();
-void AddSC_Argen_Tournament();
 
 //outland
 void AddSC_boss_exarch_maladaar();           //Auchindoun Auchenai Crypts
@@ -549,7 +538,6 @@ void AddSC_boss_warlord_kalithresh();
 void AddSC_instance_steam_vault();
 void AddSC_boss_hungarfen();                 //CR Underbog
 void AddSC_boss_the_black_stalker();
-void AddSC_boss_frostlord_ahune();           //CR Slave Pens
 void AddSC_boss_gruul();                     //Gruul's Lair
 void AddSC_boss_high_king_maulgar();
 void AddSC_instance_gruuls_lair();
@@ -605,8 +593,6 @@ void AddSC_outdoorpvp_na();
 void AddSC_outdoorpvp_si();
 void AddSC_outdoorpvp_tf();
 void AddSC_outdoorpvp_zm();
-void AddSC_outdoorpvp_wg();
-void AddSC_outdoorpvp_gh();
 
 // player
 void AddSC_chat_log();
@@ -619,7 +605,6 @@ void AddScripts()
     AddSpellScripts();
     AddSC_SmartSCripts();
     AddCommandScripts();
-    sAnticheatMgr->StartScripts();
 #ifdef SCRIPTS
     AddWorldScripts();
     AddEasternKingdomsScripts();
@@ -661,7 +646,6 @@ void AddSpellScripts()
 
 void AddCommandScripts()
 {
-    AddSC_anticheat_commandscript();
     AddSC_account_commandscript();
     AddSC_achievement_commandscript();
     AddSC_debug_commandscript();
@@ -1015,7 +999,6 @@ void AddOutlandScripts()
     AddSC_instance_steam_vault();
     AddSC_boss_hungarfen();                 //CR Underbog
     AddSC_boss_the_black_stalker();
-    AddSC_boss_frostlord_ahune();           //CR Slave Pens
     AddSC_boss_gruul();                     //Gruul's Lair
     AddSC_boss_high_king_maulgar();
     AddSC_instance_gruuls_lair();
@@ -1144,14 +1127,11 @@ void AddNorthrendScripts()
     AddSC_boss_general_vezax();
     AddSC_boss_assembly_of_iron();
     AddSC_boss_kologarn();
-    AddSC_boss_freya();
-    AddSC_boss_mimiron();
-    AddSC_boss_thorim();
-    AddSC_boss_hodir();
     AddSC_ulduar_teleporter();
+    AddSC_boss_mimiron();
+    AddSC_boss_hodir();
+    AddSC_boss_freya();
     AddSC_instance_ulduar();
-    AddSC_boss_yoggsaron();
-    AddSC_boss_algalon();
     AddSC_boss_keleseth();              //Utgarde Keep
     AddSC_boss_skarvald_dalronn();
     AddSC_boss_ingvar_the_plunderer();
@@ -1194,11 +1174,9 @@ void AddNorthrendScripts()
     AddSC_halls_of_reflection();
     AddSC_boss_falric();
     AddSC_boss_marwyn();
-    AddSC_boss_lich_king_hr();
     AddSC_boss_lord_marrowgar();        // Icecrown Citadel
     AddSC_boss_lady_deathwhisper();
     AddSC_boss_deathbringer_saurfang();
-    AddSC_boss_gunship_battle();
     AddSC_boss_festergut();
     AddSC_boss_rotface();
     AddSC_boss_professor_putricide();
@@ -1212,10 +1190,9 @@ void AddNorthrendScripts()
     AddSC_icecrown_citadel();
     AddSC_instance_ruby_sanctum();      // Ruby Sanctum
     AddSC_ruby_sanctum();
-    AddSC_boss_baltharus();
-    AddSC_boss_ragefire();
-    AddSC_boss_zarithrian();
-    AddSC_boss_halion();
+    AddSC_boss_baltharus_the_warborn();
+    AddSC_boss_saviana_ragefire();
+    AddSC_boss_general_zarithrian();
 
     AddSC_dalaran();
     AddSC_borean_tundra();
@@ -1228,8 +1205,6 @@ void AddNorthrendScripts()
     AddSC_zuldrak();
     AddSC_crystalsong_forest();
     AddSC_isle_of_conquest();
-    AddSC_wintergrasp();
-    AddSC_Argen_Tournament();
 #endif
 }
 
@@ -1242,8 +1217,6 @@ void AddOutdoorPvPScripts()
     AddSC_outdoorpvp_si();
     AddSC_outdoorpvp_tf();
     AddSC_outdoorpvp_zm();
-    AddSC_outdoorpvp_wg();
-    AddSC_outdoorpvp_gh();
 #endif
 }
 

@@ -15,6 +15,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* ScriptData
+SDName: Sholazar_Basin
+SD%Complete: 100
+SDComment: Quest support: 11253, 11241.
+SDCategory: howling_fjord
+EndScriptData */
+
 /* ContentData
 npc_plaguehound_tracker
 npc_apothecary_hanes
@@ -140,7 +147,7 @@ public:
         }
     };
 
-    CreatureAI *GetAI(Creature* creature) const
+    CreatureAI* GetAI(Creature* creature) const
     {
         return new npc_Apothecary_HanesAI(creature);
     }
@@ -189,7 +196,7 @@ public:
         }
     };
 
-    CreatureAI *GetAI(Creature* creature) const
+    CreatureAI* GetAI(Creature* creature) const
     {
         return new npc_plaguehound_trackerAI(creature);
     }
@@ -341,9 +348,9 @@ class npc_daegarn : public CreatureScript
 public:
     npc_daegarn() : CreatureScript("npc_daegarn") { }
 
-    bool OnQuestAccept(Player* player, Creature* creature, const Quest* pQuest)
+    bool OnQuestAccept(Player* player, Creature* creature, const Quest* quest)
     {
-        if (pQuest->GetQuestId() == QUEST_DEFEAT_AT_RING)
+        if (quest->GetQuestId() == QUEST_DEFEAT_AT_RING)
         {
             if (npc_daegarnAI* pDaegarnAI = CAST_AI(npc_daegarn::npc_daegarnAI, creature->AI()))
                 pDaegarnAI->StartEvent(player->GetGUID());
@@ -414,7 +421,7 @@ public:
         }
     };
 
-    CreatureAI *GetAI(Creature* creature) const
+    CreatureAI* GetAI(Creature* creature) const
     {
         return new npc_daegarnAI(creature);
     }

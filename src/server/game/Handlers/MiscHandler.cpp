@@ -122,7 +122,7 @@ void WorldSession::HandleGossipSelectOptionOpcode(WorldPacket & recv_data)
     }
 
     // remove fake death
-    if (GetPlayer()->HasUnitState(UNIT_STAT_DIED))
+    if (GetPlayer()->HasUnitState(UNIT_STATE_DIED))
         GetPlayer()->RemoveAurasByType(SPELL_AURA_FEIGN_DEATH);
 
     if ((unit && unit->GetCreatureInfo()->ScriptID != unit->LastUsedScriptID) || (go && go->GetGOInfo()->ScriptId != go->LastUsedScriptID))
@@ -1170,6 +1170,16 @@ void WorldSession::HandleSetActionBarToggles(WorldPacket& recv_data)
     }
 
     GetPlayer()->SetByteValue(PLAYER_FIELD_BYTES, 2, ActionBar);
+}
+
+void WorldSession::HandleWardenDataOpcode(WorldPacket& recv_data)
+{
+    recv_data.read_skip<uint8>();
+    /*
+        uint8 tmp;
+        recv_data >> tmp;
+        sLog->outDebug("Received opcode CMSG_WARDEN_DATA, not resolve.uint8 = %u", tmp);
+    */
 }
 
 void WorldSession::HandlePlayedTime(WorldPacket& recv_data)

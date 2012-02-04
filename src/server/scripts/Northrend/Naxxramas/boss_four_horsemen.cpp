@@ -302,7 +302,6 @@ public:
             if (instance)
                 instance->SetData(DATA_HORSEMEN0 + id, DONE);
 
-            instance->SetBossState(BOSS_HORSEMEN, DONE);
             if (instance && DoEncounterAction(NULL, false, false, true))
             {
                 instance->SetBossState(BOSS_HORSEMEN, DONE);
@@ -343,7 +342,7 @@ public:
 
             events.Update(diff);
 
-            if (me->HasUnitState(UNIT_STAT_CASTING))
+            if (me->HasUnitState(UNIT_STATE_CASTING))
                 return;
 
             while (uint32 eventId = events.ExecuteEvent())

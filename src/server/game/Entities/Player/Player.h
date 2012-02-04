@@ -1077,21 +1077,6 @@ private:
     uint32 _xp;
 };
 
-/* World of Warcraft Armory */
-struct WowarmoryFeedEntry {
-    uint32 guid;         // Player GUID
-    time_t date;         // Log date
-    uint32 type;         // TYPE_ACHIEVEMENT_FEED, TYPE_ITEM_FEED, TYPE_BOSS_FEED
-    uint32 data;         // TYPE_ITEM_FEED: item_entry, TYPE_BOSS_FEED: creature_entry
-    uint32 item_guid;    // Can be 0
-    uint32 item_quality; // Can be 0
-    uint8  difficulty;   // Can be 0
-    int    counter;      // Can be 0
-};
-
-typedef std::vector<WowarmoryFeedEntry> WowarmoryFeeds;
-/* World of Warcraft Armory */
-
 class Player : public Unit, public GridObject<Player>
 {
     friend class WorldSession;
@@ -1101,8 +1086,6 @@ class Player : public Unit, public GridObject<Player>
         explicit Player (WorldSession* session);
         ~Player ();
 
-        //AnticheatData anticheatData;
-		
         void CleanupsBeforeDelete(bool finalCleanup = true);
 
         static UpdateMask updateVisualBits;
@@ -1112,10 +1095,6 @@ class Player : public Unit, public GridObject<Player>
         void RemoveFromWorld();
 
         bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0);
-
-        void TeleportOutOfMap(Map* oldMap);
-        void KnockBackWithAngle(float angle, float horizontalSpeed, float verticalSpeed);
-
         bool TeleportTo(WorldLocation const &loc, uint32 options = 0)
         {
             return TeleportTo(loc.GetMapId(), loc.GetPositionX(), loc.GetPositionY(), loc.GetPositionZ(), loc.GetOrientation(), options);
@@ -1827,7 +1806,7 @@ class Player : public Unit, public GridObject<Player>
         void SetContestedPvPTimer(uint32 newTime) {m_contestedPvPTimer = newTime;}
         void ResetContestedPvP()
         {
-            ClearUnitState(UNIT_STAT_ATTACK_PLAYER);
+            ClearUnitState(UNIT_STATE_ATTACK_PLAYER);
             RemoveFlag(PLAYER_FLAGS, PLAYER_FLAGS_CONTESTED_PVP);
             m_contestedPvPTimer = 0;
         }
@@ -2295,26 +2274,6 @@ class Player : public Unit, public GridObject<Player>
         bool IsImmuneToEnvironmentalDamage();
         uint32 EnvironmentalDamage(EnviromentalDamage type, uint32 damage);
 
-	    // Jail by WarHead edited by spgm
-        // ---------------
-        // Char datas...
-		bool m_jail_warning;
-		bool m_jail_amnestie;
-		bool m_jail_isjailed;           // Is this player jailed?
-		std::string m_jail_char;        // Name of jailed char
-		uint32 m_jail_guid;             // guid of the jailed char
-		uint32 m_jail_release;          // When is the player a free man/woman?
-		std::string m_jail_reason;      // Why was the char jailed?
-		uint32 m_jail_times;			// How often was the player jailed?
-		uint32 m_jail_amnestietime;
-		uint32 m_jail_gmacc;            // Used GM acc
-		std::string m_jail_gmchar;      // Used GM char
-		std::string m_jail_lasttime;    // Last jail time
-		uint32 m_jail_duration;         // Duration of the jail
-		// Load / save functions...
-		void _LoadJail(void);           // Loads the jail datas
-		void _SaveJail(void);           // Saves the jail datas
-
         /*********************************************************/
         /***               FLOOD FILTER SYSTEM                 ***/
         /*********************************************************/
@@ -2416,12 +2375,6 @@ class Player : public Unit, public GridObject<Player>
 
         void SendCinematicStart(uint32 CinematicSequenceId);
         void SendMovieStart(uint32 MovieId);
-
-        /* World of Warcraft Armory */
-        void CreateWowarmoryFeed(uint32 type, uint32 data, uint32 item_guid, uint32 item_quality);
-        void InitWowarmoryFeeds();
-        /* World of Warcraft Armory */
-
 
         /*********************************************************/
         /***                 INSTANCE SYSTEM                   ***/
@@ -2527,7 +2480,6 @@ class Player : public Unit, public GridObject<Player>
         AchievementMgr const& GetAchievementMgr() const { return m_achievementMgr; }
         void UpdateAchievementCriteria(AchievementCriteriaTypes type, uint32 miscValue1 = 0, uint32 miscValue2 = 0, Unit* unit = NULL);
         void CompletedAchievement(AchievementEntry const* entry);
-        bool HasAchieved(uint32 entry);
 
         bool HasTitle(uint32 bitIndex);
         bool HasTitle(CharTitlesEntry const* title) { return HasTitle(title->bit_index); }
@@ -2911,8 +2863,6 @@ class Player : public Unit, public GridObject<Player>
         uint32 m_timeSyncTimer;
         uint32 m_timeSyncClient;
         uint32 m_timeSyncServer;
-        // World of Warcraft Armory Feeds
-        WowarmoryFeeds m_wowarmory_feeds;
 
         InstanceTimeMap _instanceResetTimes;
         uint32 _pendingBindId;

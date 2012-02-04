@@ -563,7 +563,7 @@ class npc_tirion_toc : public CreatureScript
                                 if (Creature* temp = me->SummonCreature(NPC_GORMOK, ToCSpawnLoc[0].GetPositionX(), ToCSpawnLoc[0].GetPositionY(), ToCSpawnLoc[0].GetPositionZ(), 5, TEMPSUMMON_CORPSE_TIMED_DESPAWN, 30*IN_MILLISECONDS))
                                 {
                                     temp->GetMotionMaster()->MovePoint(0, ToCCommonLoc[5].GetPositionX(), ToCCommonLoc[5].GetPositionY(), ToCCommonLoc[5].GetPositionZ());
-                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                                     temp->SetReactState(REACT_PASSIVE);
                                 }
                             }
@@ -591,13 +591,13 @@ class npc_tirion_toc : public CreatureScript
                                 if (Creature* temp = me->SummonCreature(NPC_DREADSCALE, ToCSpawnLoc[1].GetPositionX(), ToCSpawnLoc[1].GetPositionY(), ToCSpawnLoc[1].GetPositionZ(), 5, TEMPSUMMON_MANUAL_DESPAWN))
                                 {
                                     temp->GetMotionMaster()->MovePoint(0, ToCCommonLoc[8].GetPositionX(), ToCCommonLoc[8].GetPositionY(), ToCCommonLoc[8].GetPositionZ());
-                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                                     temp->SetReactState(REACT_PASSIVE);
                                 }
                                 if (Creature* temp = me->SummonCreature(NPC_ACIDMAW, ToCCommonLoc[9].GetPositionX(), ToCCommonLoc[9].GetPositionY(), ToCCommonLoc[9].GetPositionZ(), 5, TEMPSUMMON_MANUAL_DESPAWN))
                                 {
                                     temp->SetVisible(true);
-                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                                    temp->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                                     temp->SetReactState(REACT_PASSIVE);
                                 }
                             }
@@ -623,7 +623,7 @@ class npc_tirion_toc : public CreatureScript
                                 if (Creature* temp = me->SummonCreature(NPC_ICEHOWL, ToCSpawnLoc[0].GetPositionX(), ToCSpawnLoc[0].GetPositionY(), ToCSpawnLoc[0].GetPositionZ(), 5, TEMPSUMMON_DEAD_DESPAWN))
                                 {
                                     temp->GetMotionMaster()->MovePoint(2, ToCCommonLoc[5].GetPositionX(), ToCCommonLoc[5].GetPositionY(), ToCCommonLoc[5].GetPositionZ());
-                                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_OOC_NOT_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                                     me->SetReactState(REACT_PASSIVE);
 
                                 }
@@ -774,44 +774,14 @@ class npc_tirion_toc : public CreatureScript
                             break;
                         case 6000:
                             me->NearTeleportTo(AnubarakLoc[0].GetPositionX(), AnubarakLoc[0].GetPositionY(), AnubarakLoc[0].GetPositionZ(), 4.0f);
-                            m_uiUpdateTimer = 14000;
+                            m_uiUpdateTimer = 20000;
                             m_instance->SetData(TYPE_EVENT, 6005);
                             break;
                         case 6005:
                             DoScriptText(SAY_STAGE_4_06, me);
-                            me->SummonCreature(33643, me->GetPositionX(), me->GetPositionY()+5, me->GetPositionZ(), me->GetOrientation());
-                            m_uiUpdateTimer = 10000;
-                            m_instance->SetData(TYPE_EVENT, 6008);
-                            break;
-                        case 6008:
-                            {
-                            Creature *m_mage = me->FindNearestCreature(33643, 100.0f, true);
-                            m_mage->SetOrientation(me->GetOrientation());
-                            m_mage->AI()->DoCastAOE(53142);
-                            m_uiUpdateTimer = 11000;
-                            m_instance->SetData(TYPE_EVENT, 6009);
-                            break;
-                            }
-                        case 6009:
-                            {
-                            GameObject *portal = me->FindNearestGameObject(191164, 100.0f);
-                            float posx = portal->GetPositionX();
-                            float posy = portal->GetPositionY();
-                            float posz = portal->GetPositionZ();
-                            portal->DestroyForNearbyPlayers();
-                            Map::PlayerList const &players = me->GetMap()->GetPlayers();
-                            for (Map::PlayerList::const_iterator itr = players.begin(); itr != players.end(); ++itr)
-                            {
-                                 Player* p_portalcaster = itr->getSource();
-                                 if (!p_portalcaster->isGameMaster())
-                                 {
-                                     p_portalcaster->SummonGameObject(191164, posx, posy, posz, 0, 0, 0, 0, 0, 6000000);
-                                     break;
-                                 }
-                            }
-                            m_uiUpdateTimer = 1000;
+                            m_uiUpdateTimer = 20000;
                             m_instance->SetData(TYPE_EVENT, 6010);
-                            }
+                            break;
                         case 6010:
                             if (IsHeroic())
                             {

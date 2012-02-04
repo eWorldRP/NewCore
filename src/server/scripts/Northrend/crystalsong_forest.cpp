@@ -15,6 +15,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* Script Data Start
+SDName: CrystalSongForest
+SDAuthor: Malcrom
+SD%Complete: 99%
+SDComment:
+SDCategory: CrystalsongForest
+Script Data End */
+
 #include "ScriptPCH.h"
 
 /*******************************************************
@@ -90,7 +98,7 @@ public:
         }
     };
 
-    CreatureAI *GetAI(Creature* creature) const
+    CreatureAI* GetAI(Creature* creature) const
     {
         return new npc_warmage_violetstandAI(creature);
     }

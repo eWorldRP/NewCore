@@ -28,6 +28,13 @@ EndScriptData */
 
 enum Yells
 {
+    //when shappiron dies. dialog between kel and lich king (in this order)
+    SAY_SAPP_DIALOG1                                       = -1533084, //not used
+    SAY_SAPP_DIALOG2_LICH                                  = -1533085, //not used
+    SAY_SAPP_DIALOG3                                       = -1533086, //not used
+    SAY_SAPP_DIALOG4_LICH                                  = -1533087, //not used
+    SAY_SAPP_DIALOG5                                       = -1533088, //not used
+    SAY_CAT_DIED                                           = -1533089, //when cat dies, not used
     //when each of the 4 wing bosses dies
     SAY_TAUNT1                                             = -1533090, //not used
     SAY_TAUNT2                                             = -1533091, //not used
@@ -479,7 +486,7 @@ public:
                     else uiGuardiansOfIcecrownTimer -= diff;
                 }
 
-                if (me->HasUnitState(UNIT_STAT_CASTING))
+                if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
                 if (uint32 eventId = events.GetEvent())

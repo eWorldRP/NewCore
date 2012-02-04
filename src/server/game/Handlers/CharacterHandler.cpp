@@ -45,9 +45,6 @@
 #include "AccountMgr.h"
 #include "LFGMgr.h"
 
-#include "OutdoorPvPWG.h"
-#include "OutdoorPvPMgr.h"
-
 class LoginQueryHolder : public SQLQueryHolder
 {
     private:
@@ -919,23 +916,6 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     sObjectAccessor->AddObject(pCurrChar);
     //sLog->outDebug("Player %s added to Map.", pCurrChar->GetName());
 
-    //Send WG timer to player at login 
-	if (sWorld->getBoolConfig(CONFIG_OUTDOORPVP_WINTERGRASP_ENABLED))
-	{
-	    if (OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(4197))
-	    {
-            if (pvpWG->isWarTime()) // "Battle in progress"
-            {
-                pCurrChar->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL)));
-            } 
-            else // Time to next battle
-            {
-                pvpWG->SendInitWorldStatesTo(pCurrChar);
-                pCurrChar->SendUpdateWorldState(ClockWorldState[1], uint32(time(NULL) + pvpWG->GetTimer()));
-            }
-	    }
-	}
-
     pCurrChar->SendInitialPacketsAfterAddToMap();
 
     PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_UPD_CHAR_ONLINE);
@@ -1024,7 +1004,7 @@ void WorldSession::HandlePlayerLogin(LoginQueryHolder* holder)
     sLog->outChar("Account: %d (IP: %s) Login Character:[%s] (GUID: %u)",
         GetAccountId(), IP_str.c_str(), pCurrChar->GetName(), pCurrChar->GetGUIDLow());
 
-    if (!pCurrChar->IsStandState() && !pCurrChar->HasUnitState(UNIT_STAT_STUNNED))
+    if (!pCurrChar->IsStandState() && !pCurrChar->HasUnitState(UNIT_STATE_STUNNED))
         pCurrChar->SetStandState(UNIT_STAND_STATE_STAND);
 
     m_playerLoading = false;
