@@ -18,16 +18,12 @@
 #include "ScriptPCH.h"
 #include "ahnkahet.h"
 
-//not in db
 enum Yells
 {
-    SAY_AGGRO                                     = -1619014,
-    SAY_SLAY_1                                    = -1619015,
-    SAY_SLAY_2                                    = -1619016,
-    SAY_SLAY_3                                    = -1619017,
-    SAY_DEATH                                     = -1619018,
-    SAY_EGG_SAC_1                                 = -1619019,
-    SAY_EGG_SAC_2                                 = -1619020
+    SAY_AGGRO                                     = 0,
+    SAY_SLAY                                      = 1,
+    SAY_DEATH                                     = 2,
+    SAY_EGG_SAC                                   = 3
 };
 
 enum Spells
@@ -94,7 +90,7 @@ class boss_elder_nadox : public CreatureScript
 
             void EnterCombat(Unit* /*who*/)
             {
-                DoScriptText(SAY_DEATH, me);
+                talk(SAY_AGGRO);
 
                 if (instance)
                     instance->SetData(DATA_ELDER_NADOX_EVENT, IN_PROGRESS);
@@ -102,12 +98,12 @@ class boss_elder_nadox : public CreatureScript
 
             void KilledUnit(Unit* /*who*/)
             {
-                DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2, SAY_SLAY_3), me);
+                talk(SAY_SLAY);
             }
 
             void JustDied(Unit* /*who*/)
             {
-                DoScriptText(SAY_SLAY_3, me); //SAY_SLAY_3 on death?
+                talk(SAY_DEATH);
 
                 if (instance)
                     instance->SetData(DATA_ELDER_NADOX_EVENT, DONE);
@@ -159,7 +155,7 @@ class boss_elder_nadox : public CreatureScript
                     DoCast(me, SPELL_SUMMON_SWARMERS, true);
                     DoCast(me, SPELL_SUMMON_SWARMERS);
                     if (urand(1, 3) == 3) // 33% chance of dialog
-                        DoScriptText(RAND(SAY_EGG_SAC_1, SAY_EGG_SAC_2), me);
+                        talk(SAY_EGG_SAC);
 
                     uiSwarmerSpawnTimer = 10000;
                 }

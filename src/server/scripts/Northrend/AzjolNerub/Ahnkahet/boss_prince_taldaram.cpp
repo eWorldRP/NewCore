@@ -49,14 +49,11 @@ enum Misc
 
 enum Yells
 {
-    SAY_AGGRO                                     = -1619021,
-    SAY_SLAY_1                                    = -1619022,
-    SAY_SLAY_2                                    = -1619023,
-    SAY_DEATH                                     = -1619024,
-    SAY_FEED_1                                    = -1619025,
-    SAY_FEED_2                                    = -1619026,
-    SAY_VANISH_1                                  = -1619027,
-    SAY_VANISH_2                                  = -1619028
+    SAY_AGGRO                                     = 0,
+    SAY_SLAY                                      = 1,
+    SAY_DEATH                                     = 2,
+    SAY_FEED                                      = 3,
+    SAY_VANISH                                    = 4
 };
 enum CombatPhase
 {
@@ -118,7 +115,7 @@ public:
         {
             if (instance)
                 instance->SetData(DATA_PRINCE_TALDARAM_EVENT, IN_PROGRESS);
-            DoScriptText(SAY_AGGRO, me);
+            talk(SAY_AGGRO);
         }
 
         void UpdateAI(const uint32 diff)
@@ -224,7 +221,7 @@ public:
                             //He only vanishes if there are 3 or more alive players
                             if (target_list.size() > 2)
                             {
-                                DoScriptText(RAND(SAY_VANISH_1, SAY_VANISH_2), me);
+                                talk(SAY_VANISH);
                                 DoCast(me, SPELL_VANISH);
                                 Phase = JUST_VANISHED;
                                 uiPhaseTimer = 500;
@@ -260,7 +257,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            DoScriptText(SAY_DEATH, me);
+            talk(SAY_DEATH);
 
             if (instance)
                 instance->SetData(DATA_PRINCE_TALDARAM_EVENT, DONE);
@@ -278,7 +275,7 @@ public:
                 uiPhaseTimer = 0;
                 uiEmbraceTarget = 0;
             }
-            DoScriptText(RAND(SAY_SLAY_1, SAY_SLAY_2), me);
+            talk(SAY_SLAY);
         }
 
         bool CheckSpheres()
