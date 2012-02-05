@@ -90,7 +90,7 @@ class boss_elder_nadox : public CreatureScript
 
             void EnterCombat(Unit* /*who*/)
             {
-                talk(SAY_AGGRO);
+                Talk(SAY_AGGRO);
 
                 if (instance)
                     instance->SetData(DATA_ELDER_NADOX_EVENT, IN_PROGRESS);
@@ -98,12 +98,12 @@ class boss_elder_nadox : public CreatureScript
 
             void KilledUnit(Unit* /*who*/)
             {
-                talk(SAY_SLAY);
+                Talk(SAY_SLAY);
             }
 
             void JustDied(Unit* /*who*/)
             {
-                talk(SAY_DEATH);
+                Talk(SAY_DEATH);
 
                 if (instance)
                     instance->SetData(DATA_ELDER_NADOX_EVENT, DONE);
@@ -155,7 +155,7 @@ class boss_elder_nadox : public CreatureScript
                     DoCast(me, SPELL_SUMMON_SWARMERS, true);
                     DoCast(me, SPELL_SUMMON_SWARMERS);
                     if (urand(1, 3) == 3) // 33% chance of dialog
-                        talk(SAY_EGG_SAC);
+                        Talk(SAY_EGG_SAC);
 
                     uiSwarmerSpawnTimer = 10000;
                 }

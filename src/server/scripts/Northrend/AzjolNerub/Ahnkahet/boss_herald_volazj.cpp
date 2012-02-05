@@ -172,7 +172,7 @@ public:
 
         void EnterCombat(Unit* /*who*/)
         {
-            talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
 
             if (instance)
             {
@@ -295,7 +295,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            talk(SAY_DEATH);
+            Talk(SAY_DEATH);
 
             if (instance)
                 instance->SetData(DATA_HERALD_VOLAZJ, DONE);
@@ -306,7 +306,7 @@ public:
 
         void KilledUnit(Unit* /*victim*/)
         {
-            talk(SAY_SLAY);
+            Talk(SAY_SLAY);
         }
     };
 

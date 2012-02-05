@@ -115,7 +115,7 @@ public:
         {
             if (instance)
                 instance->SetData(DATA_PRINCE_TALDARAM_EVENT, IN_PROGRESS);
-            talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
         }
 
         void UpdateAI(const uint32 diff)
@@ -221,7 +221,7 @@ public:
                             //He only vanishes if there are 3 or more alive players
                             if (target_list.size() > 2)
                             {
-                                talk(SAY_VANISH);
+                                Talk(SAY_VANISH);
                                 DoCast(me, SPELL_VANISH);
                                 Phase = JUST_VANISHED;
                                 uiPhaseTimer = 500;
@@ -257,7 +257,7 @@ public:
 
         void JustDied(Unit* /*killer*/)
         {
-            talk(SAY_DEATH);
+            Talk(SAY_DEATH);
 
             if (instance)
                 instance->SetData(DATA_PRINCE_TALDARAM_EVENT, DONE);
@@ -275,7 +275,7 @@ public:
                 uiPhaseTimer = 0;
                 uiEmbraceTarget = 0;
             }
-            talk(SAY_SLAY);
+            Talk(SAY_SLAY);
         }
 
         bool CheckSpheres()

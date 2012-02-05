@@ -120,7 +120,7 @@ public:
             if (!instance || (who->GetTypeId() == TYPEID_UNIT && who->GetEntry() == NPC_JEDOGA_CONTROLLER))
                 return;
 
-            talk(SAY_AGGRO);
+            Talk(SAY_AGGRO);
             me->SetInCombatWithZone();
             instance->SetData(DATA_JEDOGA_SHADOWSEEKER_EVENT, IN_PROGRESS);
         }
@@ -138,12 +138,12 @@ public:
             if (!Victim || Victim->GetTypeId() != TYPEID_PLAYER)
                 return;
 
-            talk(SAY_SLAY);
+            Talk(SAY_SLAY);
         }
 
         void JustDied(Unit* /*Killer*/)
         {
-            talk(SAY_DEATH);
+            Talk(SAY_DEATH);
             if (instance)
                 instance->SetData(DATA_JEDOGA_SHADOWSEEKER_EVENT, DONE);
         }
@@ -169,7 +169,7 @@ public:
 
             if (!bPreDone && who->GetTypeId() == TYPEID_PLAYER && me->GetDistance(who) < 100.0f)
             {
-                talk(SAY_PREACHING);
+                Talk(SAY_PREACHING);
                 bPreDone = true;
             }
 
@@ -261,7 +261,7 @@ public:
 
             if (opfer)
             {
-                talk(SAY_SACRIFICE_1);
+                Talk(SAY_SACRIFICE_1);
                 instance->SetData64(DATA_ADD_JEDOGA_OPFER, opfer);
             } else
                 bCanDown = true;
@@ -269,7 +269,7 @@ public:
 
         void Opfern()
         {
-            talk(SAY_SACRIFICE_2);
+            Talk(SAY_SACRIFICE_2);
 
             me->InterruptNonMeleeSpells(false);
             DoCast(me, SPELL_GIFT_OF_THE_HERALD, false);
