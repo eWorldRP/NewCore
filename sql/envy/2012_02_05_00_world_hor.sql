@@ -1,6 +1,5 @@
 ﻿-- Halls of Reflection
 -- Creature Templates
-START TRANSACTION;
 SET @NPC_UTHER              := 37225;
 SET @NPC_JAINA_INTRO        := 37221;
 SET @NPC_SYLVANA_INTRO      := 37223;
