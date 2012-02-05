@@ -1,3 +1,5 @@
+SET NAMES latin1;
+
 DELETE FROM `spell_script_names` WHERE spell_id IN (66515, 66867, 67534, 67830, 66482);
 INSERT INTO `spell_script_names` VALUES
 (66867, 'spell_eadric_hammer_of_righteous'), -- Hammer can be picked by target if isn't under HoJ effect
@@ -139,22 +141,23 @@ UPDATE `creature_template` SET `difficulty_entry_1` = 35717 WHERE `entry` = 3559
 -- Argent Prechamp
 -- Argent Lightwielder
 UPDATE `creature_template` SET `modelid3` = 0 WHERE `entry` = 35309;
-UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35310;
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `dmg_multiplier` = 16.8, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35310;
 -- Argent Monk
 UPDATE `creature_template` SET `modelid3` = 0 WHERE `entry` = 35305;
-UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 650, `attackpower` = 158, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35306;
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 650, `attackpower` = 158, `dmg_multiplier` = 16, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35306;
 -- Argent Priestess
 UPDATE `creature_template` SET `modelid3` = 0 WHERE `entry` = 35307;
-UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35308;
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `dmg_multiplier` = 11, `mechanic_immune_mask` = 650854267 WHERE `entry` = 35308;
 -- 	Paletress memory
-UPDATE `creature_template` SET `mindmg` = 330, `maxdmg` = 495, `attackpower` = 124, `baseattacktime` = 2000, `mechanic_immune_mask` = 617297499 WHERE `name` LIKE 'Memory of%(1)';
+UPDATE `creature_template` SET `mindmg` = 330, `maxdmg` = 495, `attackpower` = 124, `dmg_multiplier` = 41.5, `baseattacktime` = 2000, `mechanic_immune_mask` = 617297499 WHERE `name` LIKE 'Memory of%(1)';
 -- Major bosses immunities
 UPDATE `creature_template` SET `mechanic_immune_mask` = 617299835 WHERE `entry` IN (34928,35517,35119,35518,35451,35490);
 -- Risen champions
-UPDATE `creature_template` SET `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158 WHERE `entry` = 35717;
+UPDATE `creature_template` SET `dmg_multiplier` = 1.5 WHERE `entry` = 35590;
+UPDATE `creature_template` SET `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `dmg_multiplier` = 3 WHERE `entry` = 35717;
 UPDATE `creature_template` SET `difficulty_entry_1` = 35546 WHERE `entry` = 35545;
 UPDATE `creature_template` SET `difficulty_entry_1` = 35568 WHERE `entry` = 35564;
-UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158 WHERE `entry` IN (35568, 35546);
+UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `mindmg` = 420, `maxdmg` = 630, `attackpower` = 158, `dmg_multiplier` = 3 WHERE `entry` IN (35568, 35546);
 UPDATE `creature_template` SET `minlevel` = 80, `maxlevel` = 80, `baseattacktime` = 2000, `faction_A` = 14, `faction_H` = 14 WHERE `entry` IN (35564, 35568, 35545, 35546, 35717, 35590);
 
 -- Script Names for ArgentSoilders
@@ -176,15 +179,15 @@ INSERT INTO `creature_template_addon` (`entry`, `path_id`, `mount`, `bytes1`, `b
 (35309, 0, 0, 0, 1, 375, '63501'),
 (35310, 0, 0, 0, 1, 375, '63501');
 
-DELETE FROM `creature_template_addon` WHERE (`entry` IN (35614, 35311));
+DELETE FROM `creature_template_addon` WHERE `entry` IN (35614, 35311);
 INSERT INTO `creature_template_addon` (`entry`, `path_id`, `mount`, `bytes1`, `bytes2`, `emote`, `auras`) VALUES
-(35614, 0, 0, 0, 0, 0, 67782), -- Desecration Stalker (Periodic Desecration)
-(35311, 0, 0, 0, 0, 0, 67196); -- Fountain of Light (Periodic Light rain)
+(35614, '', 0, 0, 0, 0, 67782), -- Desecration Stalker (Periodic Desecration)
+(35311, '', 0, 0, 0, 0, 67196); -- Fountain of Light (Periodic Light rain)
 -- Set Desecration Stalker as invisible passive trigger
 UPDATE `creature_template` SET `flags_extra` = 130 WHERE `entry` = 35614;
 -- Set Light Fountain as passive (Flags not working, why?)
 UPDATE `creature_template` SET `AIName` = 'SmartAI' WHERE `entry` = 35311;
-DELETE FROM `smart_scripts` WHERE (`entryorguid`=35311 AND `source_type`=0);
+DELETE FROM `smart_scripts` WHERE `entryorguid`=35311 AND `source_type`=0;
 INSERT INTO `smart_scripts` (`entryorguid`, `source_type`, `id`, `link`, `event_type`, `event_phase_mask`, `event_chance`, `event_flags`, `event_param1`, `event_param2`, `event_param3`, `event_param4`, `action_type`, `action_param1`, `action_param2`, `action_param3`, `action_param4`, `action_param5`, `action_param6`, `target_type`, `target_param1`, `target_param2`, `target_param3`, `target_x`, `target_y`, `target_z`, `target_o`, `comment`) VALUES
 (35311, 0, 0, 0, 25, 0, 100, 7, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Fountain of Light - Set passive');
 
@@ -237,7 +240,7 @@ UPDATE `creature_template` SET `unit_flags` = 64 WHERE `entry` IN (35451, 35490)
 UPDATE `gameobject` SET `state` = 1 WHERE `guid` = 150081;
 
 -- Waypoints for Black Knight Gryphon
-UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `flags_extra` = 2, `ScriptName` = 'npc_black_knight_skeletal_gryphon' WHERE `entry` = 35491;
+UPDATE `creature_template` SET `faction_A` = 14, `faction_H` = 14, `flags_extra` = 2, `ScriptName` = 'npc_black_knight_skeletal_gryphon' WHERE `entry` = 35491;
 DELETE FROM `npc_spellclick_spells` WHERE `npc_entry` = 35491;
 INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `quest_start`, `quest_start_active`, `quest_end`, `cast_flags`, `aura_required`, `aura_forbidden`, `user_type`) VALUES
 (35491,46598,0,0,0,0,0,0,0);
@@ -273,116 +276,116 @@ SET @SCRIPT_TEXTS_ID := -1999900;
 DELETE FROM `script_texts` WHERE `entry` <= @SCRIPT_TEXTS_ID AND `entry` >= @SCRIPT_TEXTS_ID-24;
 INSERT INTO `script_texts` (`npc_entry`,`entry`,`content_default`,`sound`,`type`,`language`,`emote`,`comment`) VALUES
 -- The added ammounts are enum Races for each one.
-(0,@SCRIPT_TEXTS_ID-00, 'The public cheer for %s.',15882,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-01, 'The humans of Stormwind cheer for %s.',13838,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-02, 'The orcs of Orgrimmar cheer for %s.',13839,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-03, 'The dwarfs of Ironforge cheer for %s.',13838,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-05, 'The forsaken of Undercity cheer for %s.',13839,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-04, 'The night elves of Darnassus cheer for%s.',13838,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-06, 'The taurens of Thunder Bluff cheer for %s.',13839,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-07, 'The gnomes of Gnomeregan cheer for %s.',13838,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-08, 'The trols of Sen''jin cheer for %s.',13839,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-10, 'The blood elves of Silvermoon cheer for %s.',13839,2,0,1, 'ToC5 Cheers'),
-(0,@SCRIPT_TEXTS_ID-11, 'The draeneis of Exodar cheer for %s.',13838,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-00, 'Les spectateurs encouragent %s.',15882,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-01, 'Les Humains de Hurlevent encouragent %s.',13838,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-02, 'Les Orcs d''Orgrimmar encouragent %s.',13839,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-03, 'Les Nains de Forgefer encouragent %s.',13838,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-05, 'Les Morts-vivants de Fossoyeuse encouragent %s.',13839,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-04, 'Les Elfes de la nuit de Darnassus encouragent %s.',13838,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-06, 'Les Taurens des Pitons du tonnerre encouragent %s.',13839,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-07, 'Les Gnomes de Gnoméragan encouragent %s.',13838,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-08, 'Les Trolls de Sen''jin encouragent %s.',13839,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-10, 'Les Elfes de sang de Lune d''Argent encouragent %s.',13839,2,0,1, 'ToC5 Cheers'),
+(0,@SCRIPT_TEXTS_ID-11, 'Les Draenei de l''Exodar encouragent %s.',13838,2,0,1, 'ToC5 Cheers'),
 -- Waking nightmare warining
-(0,@SCRIPT_TEXTS_ID-12, '?%s begins to invoke the Waking Nightmare!',0,3,0,0, 'Paletress - Memory warning.'),
-(0,@SCRIPT_TEXTS_ID-13, '%s targets $N with the Hammer of Righteous!',0,3,0,0, 'Eadric - Combat - Warning - Hammer'),
-(0,@SCRIPT_TEXTS_ID-20, '$N has risen to the ranks of champion in our tournament. We are proud to present him today.',0,1,0,1, 'ToC5 Player presentation'),
-(0,@SCRIPT_TEXTS_ID-21, '$GUn:Una; $Gpoderoso:poderosa; $Gcampeón:campeona;, $Gun:una; $Gcapacitado:capacitada; $c, $gun:una; honorable $r. Presentamos a $N.',13838,1,0,1, 'ToC5 Player presentation'),
-(0,@SCRIPT_TEXTS_ID-22, 'If you do not yet know his name, we are certain you will after these battles. We present, $N.',13838,1,0,1, 'ToC5 Player presentation'),
-(0,@SCRIPT_TEXTS_ID-23, '$GUno:Una; de $glos:las; más $gfieros:fieras; $cs in the field of battle, presented $N.',13838,1,0,1, 'ToC5 Player presentation'),
-(0,@SCRIPT_TEXTS_ID-24, 'If you still do not know his name, we are sure you will do after this fight. Introducing $N.',13838,1,0,1, 'ToC5 Player presentation');
+(0,@SCRIPT_TEXTS_ID-12, '%s commence à lancer Cauchemar éveillé !',0,3,0,0, 'Paletress - Memory warning.'),
+(0,@SCRIPT_TEXTS_ID-13, '%s commence à lancer Marteau du vertueux vers $N.',0,3,0,0, 'Eadric - Combat - Warning - Hammer'),
+(0,@SCRIPT_TEXTS_ID-20, '$N a augmenté pour atteindre le rang de $GChampionne:Champion; à notre tournoi. Nous sommes fiers vous $Gla:le; présenter aujourd''hui.',0,1,0,1, 'ToC5 Player presentation'),
+(0,@SCRIPT_TEXTS_ID-21, '$GUne:Un; $Gpuissante:puissant; $GChampionne:Champion;, $Gun:une; $Gcapacitado:capacitada; $c, $gun:une; honorable $r. Presentamos a $N.',13838,1,0,1, 'ToC5 Player presentation'),
+(0,@SCRIPT_TEXTS_ID-22, 'Los campeones del torneo hablan muy bien de $Geste:esta; $c. Hoy presentamos a $N.',13838,1,0,1, 'ToC5 Player presentation'),
+(0,@SCRIPT_TEXTS_ID-23, '$GUno:Una; de $glos:las; más $gfieros:fieras; $cs en el campo de batalla, presentamos a $N.',13838,1,0,1, 'ToC5 Player presentation'),
+(0,@SCRIPT_TEXTS_ID-24, 'Si vous ne savez toujours pas son nom, nous sommes sûrs que vous allez le retenir après ce combat. Nous présentons $N.',13838,1,0,1, 'ToC5 Player presentation');
 
 -- Texts
 DELETE FROM creature_text WHERE entry IN (35004, 35005, @TIRION, @THRALL, @GARROSH , @VARIAN , @JAINA, @EADRIC, @PALETRESS, @BLACK_KNIGHT);
 INSERT INTO creature_text (entry, groupid, id, TEXT, TYPE, LANGUAGE, probability, emote, duration, sound, COMMENT) VALUES
 -- INTROS
 -- -- Mounted Gauntlet
-/*.*/ (35004,0,0,'The Sunreavers are proud to present to their representatives in these tests of combat.',14,0,100,1,0,0,'Announcer - Player Horde Champions - Intro'),
-/*.*/ (35005,0,0,'Silver Covenant is delighted to present their fighters for this event, High Lord.',14,0,100,1,0,0,'Announcer - Player Alliance Champions - Intro'),
-/*.*/ (@TIRION,0,0,'Welcome champions. Today, in the eyes of your fellow leaders and fighters will you prove as worthy.',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (35004,0,0,'Les Saccage-Soleil sont fiers de vous présenter leurs combattants qui vont participer à ce combat.',14,0,100,1,0,0,'Announcer - Player Horde Champions - Intro'),
+/*.*/ (35005,0,0,'Le Concordat Argenté est ravi de vous présenter leurs combattants pour cet événement, mon Seigneur.',14,0,100,1,0,0,'Announcer - Player Alliance Champions - Intro'),
+/*.*/ (@TIRION,0,0,'Bienvenue champions. Aujourd''hui, dans les yeux de vos collègues dirigeants et des combattants vous prouverez que vous êtes bien digne.',14,0,100,1,0,0,'Tirion - Intro'),
 -- -- -- Horde Version
-/*....*/ (@THRALL,0,0,'Fight well, Horde! Lok''tar Ogar!',14,0,100,1,0,0,'Thrall - Intro'),
-/*....*/ (@GARROSH,0,0,'Finally, a fight worth watching.',12,0,100,1,0,0,'Garrosh - Intro'),
-/*....*/ (@VARIAN,0,0,'I did not come here to watch animals tear at each other senselessly, Tirion',12,0,100,1,0,0,'Varian - Intro'),
-/*....*/ (@JAINA,0,0,'They are worthy fighters, I see.',12,0,100,1,0,0,'Jaina - Intro'),
+/*....*/ (@THRALL,0,0,'Luttez durements, membres de la Horde ! Lok''tar Ogar !',14,0,100,1,0,0,'Thrall - Intro'),
+/*....*/ (@GARROSH,0,0,'Enfin ! Une bataille digne d''être contemplé.',12,0,100,1,0,0,'Garrosh - Intro'),
+/*....*/ (@VARIAN,0,0,'Je ne suis pas venu ici pour voir des animaux jouer entre eux sans aucun critère, Tirion.',12,0,100,1,0,0,'Varian - Intro'),
+/*....*/ (@JAINA,0,0,'Ce sont des combattants décents, vous verrez.',12,0,100,1,0,0,'Jaina - Intro'),
 -- -- // Horde Version
 -- -- -- Alliance Version
-/*....*/ (@VARIAN,1,0,'Do not see the grace to these games , Tirion . Still ... I hope that it will make an admirable way .',12,0,100,1,0,0,'Thrall - Intro'),
-/*....*/ (@JAINA,1,0,'Of course they will.',12,0,100,1,0,0,'Garrosh - Intro'),
-/*....*/ (@GARROSH,1,0,'Admirable? Ha! I will enjoy watching your little champions fail, man.',14,0,100,1,0,0,'Varian - Intro'),
-/*....*/ (@THRALL,1,0,'Garrosh is enough.',12,0,100,1,0,0,'Jaina - Intro'),
+/*....*/ (@VARIAN,1,0,'Je n''est pas l''humour pour regarder ces jeux, Tirion. Encore ... j''espère que cela sera admirable.',12,0,100,1,0,0,'Thrall - Intro'),
+/*....*/ (@JAINA,1,0,'Bien sûr qu''ils le feront.',12,0,100,1,0,0,'Garrosh - Intro'),
+/*....*/ (@GARROSH,1,0,'Admirable ? Ha! Je vais regarder vos petits champions échoués, humain.',14,0,100,1,0,0,'Varian - Intro'),
+/*....*/ (@THRALL,1,0,'Garrosh, c''est suffisant.',12,0,100,1,0,0,'Jaina - Intro'),
 -- -- // Alliance Version
-/*.*/ (@TIRION,1,0,'You will first be facing three of the Grand Champions of the Tournament! These fierce contenders have beaten out all others to reach the pinnacle of skill in the just.',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (@TIRION,1,0,'Premièrement vous serez confrontés à trois des grands champions du tournoi. Ces prétendants féroces ont battu tout le monde à leurs capacités maximale aux compétitions.',14,0,100,1,0,0,'Tirion - Intro'),
 -- -- -- Horde Version
-/*....*/ (35004,1,0,'Here comes the small but deadly Ambrose Boltspark, Grand Champion of Gnomeregan.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Mage'),
-/*....*/ (35004,2,0,'Colosos, the huge Grand Champion of the Exodar, is out the door.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Shaman'),
-/*....*/ (35004,3,0,'Entering the arena is the Grand Champion of Darnassus, the skilled sentinel Jaelyne Evensong.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Hunter'),
-/*....*/ (35004,4,0,'Proud and strong, give a cheer for Marshal Jacob Alerius, the Grand Champion of Stormwind!',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Warrior'),
-/*....*/ (35004,5,0,'Today the power of the dwarfs is represented by the Grand Champion of Ironforge, Lana Stouthammer.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Rouge'),
+/*....*/ (35004,1,0,'Voici le plus petit mais mortel: Ambrose Étinceboulon, Grand Champion de Gnomeregan.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Mage'),
+/*....*/ (35004,2,0,'Colossos, l''énorme Grand Champion de l''Exodar, se présente devant la porte.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Shaman'),
+/*....*/ (35004,3,0,'Voilà qui entre dans l''arène le Grand Champion de Darnassus, l''habile Sentinelle Jaelyne Chant-du-soir.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Hunter'),
+/*....*/ (35004,4,0,'Fort et fière, acclamez le Maréchal Jacob Alerius, le Grand Champion de Hurlevent !',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Warrior'),
+/*....*/ (35004,5,0,'Aujourd''hui, la puissance des nains est représenté par le Grand Champion de Forgefer, Lana Rudemartel.',14,0,100,1,0,0,'Announcer - Alliance Champions - Intro Rouge'),
 -- -- // Horde Version
 -- -- -- Alliance Version
-/*....*/ (35005,1,0,'Coming out of the gate is Eressea Dawnsinger, skilled mage and Grand Champion of Silvermoon!',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Mage'),
-/*....*/ (35005,2,0,'Tall in the saddle of his kodo, here is the venerable Runok Wildmane, Grand Champion of Thunder Bluff!',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Shaman'),
-/*....*/ (35005,3,0,'Entering the dry sand but dangerous Zul''tore, Grand Champion of  Sen''jin!',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Hunter'),
-/*....*/ (35005,4,0,'We presented the Grand Champion of Orgrimmar, the Mokra the Skullcrusher! ',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Warrior'),
-/*....*/ (35005,5,0,'Representing the tenacity of the Forsaken, here is the Grand Champion of the Undercity, Deathstalker Visceri!',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Rouge'),
+/*....*/ (35005,1,0,'Devant la porte Eressea Chantelaube, habile magicienne et Grand Champion de Lune d''argent !',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Mage'),
+/*....*/ (35005,2,0,'Au sommet de son Kodo, voici le vénérable Runok Crin-sauvage, Grand champion des Pitons-du-Tonnerre !',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Shaman'),
+/*....*/ (35005,3,0,'Arrivant des sables sec mais dangereux de Durotar: Zul''tore, Champion de Sen''jin !',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Hunter'),
+/*....*/ (35005,4,0,'Nous présentons le Grand champion d''Orgrimmar, Mokra le Brise-tête !',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Warrior'),
+/*....*/ (35005,5,0,'Représentant la tenacité des réprouvés, le Grand champion de Fossoyeuse, le Nécrotraqueur Viscéri !',14,0,100,1,0,0,'Announcer - Horde Champions - Intro Rouge'),
 -- -- // Alliance version
 -- // Mounted Gauntlet
 
 -- -- Argent Challenge
-/*.*/ (@TIRION,2,0,'Well fought! Your next challange comes from the Crusader''s own ranks. You will be tested against their considerable prowess.',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (@TIRION,2,0,'Beau combat ! Votre prochain défi vous fera affronté la croisade d''argent elle même. Vous serez testé contre nos plus puissants champion que nous possédons.',14,0,100,1,0,0,'Tirion - Intro'),
 -- -- -- Eadric
-/*....*/ (35004,11,0,'Entering the arena, a paladin who is no stranger to the battlefield or tournament ground, the Grand Champion of the Argent Crusade. Eadric the Pure!',14,0,100,1,0,0,'Announcer - Eadric - Intro'),
-/*....*/ (35005,11,0,'Entering the arena, a paladin who is no stranger to the battlefield or tournament ground, the Grand Champion of the Argent Crusade. Eadric the Pure!',14,0,100,1,0,0,'Announcer - Eadric - Intro'),
-/*....*/ (@EADRIC,10,0,'Are you up to the challenge? I will not hold back.',12,0,100,1,0,16134,'Eadric - Intro'),
+/*....*/ (35004,11,0,'Entrant dans l''arène, nous avons un paladin qui n''est pas étranger au champ de bataille ou dans l''enceinte du tournoi. Le grand champion de la Croisade d''argent, Eadric le Pur !',14,0,100,1,0,0,'Announcer - Eadric - Intro'),
+/*....*/ (35005,11,0,'Entrant dans l''arène, nous avons un paladin qui n''est pas étranger au champ de bataille ou dans l''enceinte du tournoi. Le grand champion de la Croisade d''argent, Eadric le Pur !',14,0,100,1,0,0,'Announcer - Eadric - Intro'),
+/*....*/ (@EADRIC,10,0,'Serez vous à la hauteur du défi ? Je ne vais aps retenir mes coups !',12,0,100,1,0,16134,'Eadric - Intro'),
 -- -- // Eadric
 -- -- -- Paletress
-/*....*/ (35004,12,0,'The next combatant is second to none is her passion for upholding the Light. I give you Argent Confessor Paletress!',14,0,100,1,0,0,'Announcer - Paletress - Intro'),
-/*....*/ (35005,12,0,'The next combatant is second to none is her passion for upholding the Light. I give you Argent Confessor Paletress!',14,0,100,1,0,0,'Announcer - Paletress - Intro'),
-/*....*/ (@PALETRESS,10,0,'Thank you, good herald. Your words are too kind.',12,0,100,1,0,16245,'Paletress - Intro'),
-/*....*/ (@PALETRESS,11,0,'May the Light give me strength to provide a worthy challenge.',12,0,100,1,0,16246,'Paletress - Intro'),
+/*....*/ (35004,12,0,'Le prochain combattant n''a pas de rival dans sa passion pour soutenir la Lumière. Je vous présente le Confesseur d''Argent Paletress !',14,0,100,1,0,0,'Announcer - Paletress - Intro'),
+/*....*/ (35005,12,0,'Le prochain combattant n''a pas de rival dans sa passion pour soutenir la Lumière. Je vous présente le Confesseur d''Argent Paletress !',14,0,100,1,0,0,'Announcer - Paletress - Intro'),
+/*....*/ (@PALETRESS,10,0,'Merci mon beau héro. Vous êtes trop gentil.',12,0,100,1,0,16245,'Paletress - Intro'),
+/*....*/ (@PALETRESS,11,0,'Puisse la lumière de me donner la force de présenter un défi a la hauteur.',12,0,100,1,0,16246,'Paletress - Intro'),
 -- -- // Paletress
-/*.*/ (@TIRION,3,0,'You may begin!',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (@TIRION,3,0,'Que le combat commence !',14,0,100,1,0,0,'Tirion - Intro'),
 -- // Argent Challenge
 
 -- -- Black Knight
-/*.*/ (@TIRION,4,0,'Well done. You have proven yourself today...',14,0,100,1,0,0,'Tirion - Intro'),
-/*.*/ (35004,13,0,'What''s that. up near the rafters?',12,0,100,1,0,0,'Announcer - Black Knight - Intro'),
-/*.*/ (35005,13,0,'What''s that. up near the rafters?',12,0,100,1,0,0,'Announcer - Black Knight - Intro'),
-/*.*/ (@BLACK_KNIGHT,10,0,'You spoiled my grand entrance. Rat.',12,0,100,1,0,16256,'Black Knight - Intro'),
-/*.*/ (@TIRION,5,0,'What is the meaning of this?',14,0,100,1,0,0,'Tirion - Intro'),
-/*.*/ (@BLACK_KNIGHT,11,0,'Did you honestly think an agent if the Kich King would be bested on the field of your pathetic little tournament?',12,0,100,1,0,16257,'Black Knight - Intro'),
-/*.*/ (@BLACK_KNIGHT,12,0,'I have come to finish my task',12,0,100,1,0,16258,'Black Knight - Intro'),
-/*.*/ (@GARROSH,10,0,'Tear him apart!',14,0,100,1,0,0,'Garrosh - Black Knight - Intro'),
-/*.*/ (@VARIAN,10,0,'Not just stand there. Kill him!',14,0,100,1,0,0,'Varian - Black Knight - Intro'),
+/*.*/ (@TIRION,4,0,'Bien joué. Vous avez prouvé votre valeur aujourd''hui ...',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (35004,13,0,'Que se passe-t''il ?',12,0,100,1,0,0,'Announcer - Black Knight - Intro'),
+/*.*/ (35005,13,0,'Que se passe-t''il ?',12,0,100,1,0,0,'Announcer - Black Knight - Intro'),
+/*.*/ (@BLACK_KNIGHT,10,0,'Tu as gâché mon entrée, rat.',12,0,100,1,0,16256,'Black Knight - Intro'),
+/*.*/ (@TIRION,5,0,'Qu''est-ce que cela signifie ?',14,0,100,1,0,0,'Tirion - Intro'),
+/*.*/ (@BLACK_KNIGHT,11,0,'Vous pensiez vraiment qu''un agent du Roi-Liche serai vaincu sur la piste de votre pitoyable petit tournoi ?',12,0,100,1,0,16257,'Black Knight - Intro'),
+/*.*/ (@BLACK_KNIGHT,12,0,'Je suis venu finir mon travail.',12,0,100,1,0,16258,'Black Knight - Intro'),
+/*.*/ (@GARROSH,10,0,'Faites-lui mordre la poussière !',14,0,100,1,0,0,'Garrosh - Black Knight - Intro'),
+/*.*/ (@VARIAN,10,0,'Ne restez pas là à regarder, TUEZ-LE !',14,0,100,1,0,0,'Varian - Black Knight - Intro'),
 -- // Black Knight
 -- //INTROS
 
 -- COMBAT TEXTS
 -- -- Eadric
-(@EADRIC,1,0,'Prepare yourselves!',14,0,100,0,0,16135,'Eadric - Combat - Aggro'),
-(@EADRIC,2,0,'Hammer of the Righteous!',14,0,100,0,0,16136,'Eadric - Combat - Hammer'),
-(@EADRIC,3,0,'You... You need more practice!',14,0,100,0,0,16137,'Eadric - Combat - Slay 1'),
-(@EADRIC,3,1,'Nay! Nay! And I say yet again nay! Not good enough!',14,0,100,0,0,16138,'Eadric - Combat - Slay 2'),
-(@EADRIC,4,0,'I yield! I submit. Excellent work. May I run away now?',14,0,100,0,0,16139,'Eadric - Combat - Death'),
-(@EADRIC,5,0,'%s begins to radiate light. Shield your eyes!',41,0,100,0,0,0,'Eadric - Combat - Warning - Radiance'),
+(@EADRIC,1,0,'Préparez-vous !',14,0,100,0,0,16135,'Eadric - Combat - Aggro'),
+(@EADRIC,2,0,'Marteau du Vertueux !',14,0,100,0,0,16136,'Eadric - Combat - Hammer'),
+(@EADRIC,3,0,'Ha, vous ! Il faut vous entrainer plus !',14,0,100,0,0,16137,'Eadric - Combat - Slay 1'),
+(@EADRIC,3,1,'Neni ! Je le dis et je le répète NENI ! Vous n''êtes pas à la hauteur !',14,0,100,0,0,16138,'Eadric - Combat - Slay 2'),
+(@EADRIC,4,0,'Grâce ! Je me rend ! Exelent travail. Puis-je me débiner maintenant ?',14,0,100,0,0,16139,'Eadric - Combat - Death'),
+(@EADRIC,5,0,'%s commence à incanter Radiance. Retournez-vous !',41,0,100,0,0,0,'Eadric - Combat - Warning - Radiance'),
 -- // Eadric
 -- -- Paletress
-(@PALETRESS,1,0,'Well then, let us begin.',14,0,100,0,0,16247,'Paletress - Combat - Aggro'),
-(@PALETRESS,2,0,'Take this time to consider your past deeds.',14,0,100,0,0,16248,'Paletress - Combat - Summon Memory'),
-(@PALETRESS,3,0,'Take your rest.',14,0,100,0,0,16250,'Paletress - Combat - Slay 1'),
-(@PALETRESS,3,1,'Be at ease.',14,0,100,0,0,16251,'Paletress - Combat - Slay 2'),
-(@PALETRESS,4,0,'Excellent work!',14,0,100,0,0,16252,'Paletress - Combat - Death'),
-(@PALETRESS,5,0,'Even the darkest memory fades when confronted.',14,0,100,0,0,16249,'Paletress - Combat - Memory dies'),
+(@PALETRESS,1,0,'Et bien alors. Commençons.',14,0,100,0,0,16247,'Paletress - Combat - Aggro'),
+(@PALETRESS,2,0,'Prennez le temps de revenir sur vos actes passées.',14,0,100,0,0,16248,'Paletress - Combat - Summon Memory'),
+(@PALETRESS,3,0,'Trouvez le repos.',14,0,100,0,0,16250,'Paletress - Combat - Slay 1'),
+(@PALETRESS,3,1,'Soyez apaisé.',14,0,100,0,0,16251,'Paletress - Combat - Slay 2'),
+(@PALETRESS,4,0,'C''est du beau travail !',14,0,100,0,0,16252,'Paletress - Combat - Death'),
+(@PALETRESS,5,0,'Même le plus noir souvenir s''estompe quand on le regarde en face.',14,0,100,0,0,16249,'Paletress - Combat - Memory dies'),
 -- // Paletress
 -- -- Black Knight
-(@BLACK_KNIGHT,1,0,'This farce ends here!',14,0,100,0,0,16259,'Black Knight - Combat - Aggro'),
-(@BLACK_KNIGHT,2,0,'Pathetic.',14,0,100,0,0,16260,'Black Knight - Combat - Slay 1'),
-(@BLACK_KNIGHT,2,1,'A waste of flesh!',14,0,100,0,0,16261,'Black Knight - Combat - Slay 2'),
-(@BLACK_KNIGHT,3,0,'My roting flash was just getting in the way!',14,0,100,0,0,16262,'Black Knight - Combat - Skeleton Res'),
-(@BLACK_KNIGHT,4,0,'I have no need for bones to best you!',14,0,100,0,0,16263,'Black Knight - Combat - Ghost Res'),
-(@BLACK_KNIGHT,5,0,'No! I must not fail...again...',14,0,100,0,0,16264,'Black Knight - Combat - Death');
+(@BLACK_KNIGHT,1,0,'Finissons-en avec cette farce !',14,0,100,0,0,16259,'Black Knight - Combat - Aggro'),
+(@BLACK_KNIGHT,2,0,'Pitoyable.',14,0,100,0,0,16260,'Black Knight - Combat - Slay 1'),
+(@BLACK_KNIGHT,2,1,'Quel gâchis de chairs !',14,0,100,0,0,16261,'Black Knight - Combat - Slay 2'),
+(@BLACK_KNIGHT,3,0,'Cette chair pourris ne faisait que de me ralentir !',14,0,100,0,0,16262,'Black Knight - Combat - Skeleton Res'),
+(@BLACK_KNIGHT,4,0,'Pas besoin de mes os pour vous vaincres.',14,0,100,0,0,16263,'Black Knight - Combat - Ghost Res'),
+(@BLACK_KNIGHT,5,0,'Non! Pas encore... un échec...',14,0,100,0,0,16264,'Black Knight - Combat - Death');
 -- // Black Knight
 -- //COMBAT TEXTS
 
@@ -488,7 +491,7 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 (@SPAWN_GUID+091,34883,650,1,1,0,0,687.83,617.649,435.493,1.58825,86400,0,0,1,0,0,0,0,0),
 (@SPAWN_GUID+092,34901,650,1,1,0,0,687.16,618.132,435.489,0,86400,0,0,1,0,0,0,0,0),
 (@SPAWN_GUID+093,34904,650,1,1,0,0,690.596,642,435.504,5.88176,86400,0,0,1,0,0,0,0,0),
--- (@SPAWN_GUID+094,31144,650,0,1,0,0,796.773,604.543,412.385,2.58299,300,0,0,2,0,0,0,0,0),
+(@SPAWN_GUID+094,31144,650,0,1,0,0,796.773,604.543,412.385,2.58299,300,0,0,2,0,0,0,0,0),
 (@SPAWN_GUID+095,34996,650,0,1,0,546,746.725,556.492,435.396,1.59928,300,0,0,13945000,4258,0,0,0,0),
 (@SPAWN_GUID+096,35491,650,0,1,0,0,799.806,639.236,475.88,2.18738,300,0,0,189000,0,0,0,0,0),
 (@SPAWN_GUID+097,34992,650,0,1,0,0,809.178,624.409,435.395,3.0774,300,0,0,4505029,7981,0,0,0,0),
@@ -523,119 +526,3 @@ INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`
 (@SPAWN_GUID+126,34974,650,0,1,0,0,787.929,563.884,438.695,2.18504,300,0,0,42,0,0,0,0,0),
 (@SPAWN_GUID+127,34857,650,1,1,0,0,689.623,598.045,435.503,0.331613,86400,0,0,1,0,0,0,0,0);
 UPDATE `creature` SET `spawnMask` = 3, `spawntimesecs` = 86400 WHERE `map` = 650;
-
--- Tial of the Champion (Normal)
-UPDATE `creature_template`
-    SET `dmg_multiplier` = CASE `entry`
-        -- Faction Grand Champions
-        WHEN 35572 THEN 11.2 -- Grand Champion Warrior
-        WHEN 34705 THEN 11.2
-        WHEN 35569 THEN 10.2 -- Grand Champion Mage
-        WHEN 34702 THEN 10.2
-        WHEN 34701 THEN 10.2 -- Grand Champion Shaman
-        WHEN 35571 THEN 10.2
-        WHEN 35570 THEN 10.2 -- Grand Champion Hunter
-        WHEN 34657 THEN 10.2
-        WHEN 35617 THEN 10.2 -- Grand Champion Rouge
-        WHEN 34703 THEN 10.2
-        -- Argent Challenge
-        WHEN 35305 THEN 8    -- Argent Monk
-        WHEN 35307 THEN 5.5  -- Argent Priestess
-        WHEN 35309 THEN 8.4  -- Argent Lightwielder
-        WHEN 35119 THEN 14.5 -- Eadric the Pure
-        WHEN 34928 THEN 14.5 -- Argent Confessor Paletress
-        -- Black Knight Encounter
-        WHEN 35564 THEN 1.4  -- Risen Arelas Brightstar
-        WHEN 35545 THEN 1.4  -- Risen Jaeren Sunsworn
-        WHEN 35590 THEN 1.5  -- Risen Champion
-        WHEN 35451 THEN 11.8 -- Black Knight
-    END,
-    `Armor_mod` = CASE `entry`
-        -- Faction Grand Champions
-        WHEN 35572 THEN 1    -- Grand Champion Warrior
-        WHEN 34705 THEN 1
-        WHEN 35569 THEN 1    -- Grand Champion Mage
-        WHEN 34702 THEN 1
-        WHEN 34701 THEN 1    -- Grand Champion Shaman
-        WHEN 35571 THEN 1
-        WHEN 35570 THEN 1    -- Grand Champion Hunter
-        WHEN 34657 THEN 1
-        WHEN 35617 THEN 1    -- Grand Champion Rouge
-        WHEN 34703 THEN 1
-        -- Argent Challenge
-        WHEN 35305 THEN 1    -- Argent Monk
-        WHEN 35307 THEN 1    -- Argent Priestess
-        WHEN 35309 THEN 1    -- Argent Lightwielder
-        WHEN 35119 THEN 1    -- Eadric the Pure
-        WHEN 34928 THEN 1    -- Argent Confessor Paletress
-        -- Black Knight Encounter
-        WHEN 35564 THEN 1    -- Risen Arelas Brightstar
-        WHEN 35545 THEN 1    -- Risen Jaeren Sunsworn
-        WHEN 35590 THEN 1    -- Risen Champion
-        WHEN 35451 THEN 1    -- Black Knight
-    END
-WHERE `entry` IN (35572, 34705, 35569, 34702, 34701, 35571, 35570, 34657, 35617, 34703, 35305, 35307, 35309, 35119, 34928, 35564, 35545, 35590, 35451);
-
--- Tial of the Champion (Heroic)
-UPDATE `creature_template`
-    SET `dmg_multiplier` = CASE `entry`
-    -- Heroic difficult
-        -- Faction Grand Champions
-        WHEN 36088 THEN 13   -- Grand Champion Warrior
-        WHEN 36089 THEN 13
-        WHEN 36085 THEN 13   -- Grand Champion Mage
-        WHEN 36082 THEN 13
-        WHEN 36083 THEN 13   -- Grand Champon Shaman
-        WHEN 36090 THEN 13
-        WHEN 36091 THEN 13   -- Grand Champion Hunter
-        WHEN 36086 THEN 13
-        WHEN 36084 THEN 13   -- Grand Champion Rouge
-        WHEN 36087 THEN 13
-        -- Argent Challenge
-        WHEN 35306 THEN 16   -- Argent Monk
-        WHEN 35308 THEN 11   -- Argent Priestess
-        WHEN 35310 THEN 16.8 -- Argent Lightwielder
-        WHEN 35518 THEN 13   -- Eadric the Pure
-        WHEN 35517 THEN 13   -- Argent Confessor Paletress
-        -- Black Knight Encounter
-        WHEN 35568 THEN 3    -- Risen Arelas Brightstar
-        WHEN 35546 THEN 3    -- Risen Jaeren Sunsworn
-        WHEN 35717 THEN 3    -- Risen Champion
-        WHEN 35490 THEN 17.6 -- Black Knight (Heroic)
-    END,
-    `Armor_mod` = CASE `entry`
-        -- Faction Grand Champions
-        WHEN 36088 THEN 1    -- Grand Champion Warrior
-        WHEN 36089 THEN 1
-        WHEN 36085 THEN 1    -- Grand Champion Mage
-        WHEN 36082 THEN 1
-        WHEN 36083 THEN 1    -- Grand Champon Shaman
-        WHEN 36090 THEN 1
-        WHEN 36091 THEN 1    -- Grand Champion Hunter
-        WHEN 36086 THEN 1
-        WHEN 36084 THEN 1    -- Grand Champion Rouge
-        WHEN 36087 THEN 1
-        -- Argent Challenge
-        WHEN 35306 THEN 1    -- Argent Monk
-        WHEN 35308 THEN 1    -- Argent Priestess
-        WHEN 35310 THEN 1    -- Argent Lightwielder
-        WHEN 35518 THEN 1    -- Eadric the Pure
-        WHEN 35517 THEN 1    -- Argent Confessor Paletress
-        -- Black Knight Encounter
-        WHEN 35568 THEN 1    -- Risen Arelas Brightstar
-        WHEN 35546 THEN 1    -- Risen Jaeren Sunsworn
-        WHEN 35717 THEN 1    -- Risen Champion
-        WHEN 35490 THEN 1    -- Black Knight (Heroic)
-    END
-WHERE `entry` IN (36088, 36089, 36085, 36082, 36083, 36090, 36091, 36086, 36084, 36087, 35306, 35308, 35310, 35518, 35517, 35568, 35546, 35717, 35490);
-UPDATE `creature_template` SET `difficulty_entry_1`=0 WHERE `entry`=367880 LIMIT 1;
-DELETE FROM `linked_respawn` WHERE `guid`=135304 AND `linkType`=0 LIMIT 1;
-UPDATE `creature_template` SET `lootid`=100000 WHERE `entry`=36788 LIMIT 1;
-DELETE FROM `gameobject_loot_template` WHERE `entry`=28045 AND `item`=1 LIMIT 1;
-INSERT INTO `npc_spellclick_spells` (`npc_entry`, `spell_id`, `quest_start`, `cast_flags`) VALUES (35427, 46598, 0, 1);
-UPDATE `creature_template` SET `equipment_id`=1926 WHERE `entry`=35490 LIMIT 1;
-UPDATE `creature_template` SET `equipment_id`=1926 WHERE `entry`=35451 LIMIT 1;
-DELETE FROM `reference_loot_template` WHERE `entry`=34172;
-
-DELETE FROM `creature` where `id` =35004 and 35005;
-INSERT INTO `creature` (`guid`, `id`, `map`, `spawnMask`, `phaseMask`, `modelid`, `equipment_id`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecs`, `spawndist`, `currentwaypoint`, `curhealth`, `curmana`, `MovementType`, `npcflag`, `unit_flags`, `dynamicflags`) VALUES (0, 35004, 650, 3, 1, 0, 0, 747.014, 619.459, 411.09, 4.74455, 300, 0, 0, 10635, 0, 0, 0, 0, 0);

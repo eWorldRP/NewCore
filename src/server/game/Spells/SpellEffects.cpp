@@ -2318,10 +2318,6 @@ void Spell::EffectHeal(SpellEffIndex /*effIndex*/)
         if (unitTarget->HasAura(48920) && (unitTarget->GetHealth() + addhealth >= unitTarget->GetMaxHealth()))
             unitTarget->RemoveAura(48920);
 
-        // Hex of Mending
-        if (unitTarget->HasAura(67534))
-            unitTarget->CastCustomSpell(67535, SPELLVALUE_BASE_POINT0, addhealth, NULL, true);
-
         m_damage -= addhealth;
     }
 }
@@ -4440,94 +4436,6 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch (m_spellInfo->Id)
             {
-                //Ebon Blade Banner
-                case 23301:
-                {
-                    if (!unitTarget || m_caster->GetTypeId() != TYPEID_PLAYER || unitTarget->GetTypeId() != TYPEID_UNIT)
-                        return;
-
-                    Player* plr = m_caster->ToPlayer();
-                    if (plr && unitTarget->isDead())
-                    {
-                        plr->KilledMonsterCredit(30220, 0);
-                        unitTarget->ToCreature()->ForcedDespawn(); //workaround for infinite credits
-                    }
-
-                    return;
-                }
-                //Shield Breaker
-                case 62575:
-                case 66480:
-                case 64595:
-                {
-                    if (!unitTarget || !m_caster)
-                        return;
-
-                    switch (m_spellInfo->Id)
-                    {
-                        case 66480: // 10k Damage
-                        case 64595:
-                            m_caster->CastSpell(unitTarget, 64590, true);
-                            break;
-                        case 62575: // 2k Damage
-                            m_caster->CastSpell(unitTarget, 62626, true);
-                            break;
-                    }
-
-                    return;
-                }
-                //Charge
-                case 62960:
-                {
-                    if (!unitTarget || !m_caster)
-                        return;
-
-                    if (Unit* damager = m_caster->GetCharmerOrOwnerOrSelf())
-                    {
-                        m_caster->CastSpell(unitTarget, 63661, true);
-                        damager->CastSpell(unitTarget, 68321, true);
-                    }
-
-                    return;
-                }
-                //Shield Breaker Trigger
-                case 62626:
-                case 64590:
-                case 65147:
-                //Charge Effect
-                case 68498:
-                case 68321:
-                case 63010:
-                case 63003:
-                {
-                    if (!unitTarget || !m_caster)
-                        return;
-
-                    if (unitTarget->HasAura(62552))
-                    {
-                        Aura* defendaura = unitTarget->GetAura(62552);
-                        defendaura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
-                    }
-
-                    if (unitTarget->HasAura(66482))
-                    {
-                        Aura* defendaura = unitTarget->GetAura(66482);
-                        defendaura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
-                    }
-
-                    if (unitTarget->HasAura(64100))
-                    {
-                        Aura* defendaura = unitTarget->GetAura(64100);
-                        defendaura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
-                    }
-
-                    if (unitTarget->HasAura(62719))
-                    {
-                        Aura* defendaura = unitTarget->GetAura(62719);
-                        defendaura->ModStackAmount(-1, AURA_REMOVE_BY_ENEMY_SPELL);
-                    }
-                    return;
-                }
                 // Glyph of Backstab
                 case 63975:
                 {
@@ -4626,6 +4534,47 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 case 26465:
                     unitTarget->RemoveAuraFromStack(26464);
                     return;
+                // Shield-Breaker - Argent Tournament
+                case 62575:
+                {
+                    if(m_caster->GetOwner())
+                        m_caster->GetOwner()->CastSpell(unitTarget,62626,true );
+                    else
+                        m_caster->CastSpell(unitTarget,62626,true );
+                        return;
+                }
+                case 62960:
+                {
+                    if (!unitTarget)
+                        return;
+                    m_caster->CastSpell(unitTarget,62563,true );
+                    m_caster->CastSpell(unitTarget,68321,true );
+                    return;
+                }
+                // Charge - Argent Tournament
+                case 68282:
+                {
+                    if (!unitTarget)
+                        return;
+                    m_caster->CastSpell(unitTarget,68284,true);
+                }
+                // Shield-Breaker - Argent Tournament
+                case 62626:
+                // Charge - Argent Tournament
+                case 68321:
+                {
+                    if(!unitTarget)
+                        return;
+                    if (unitTarget->GetAura(62719))
+                        unitTarget->RemoveAuraFromStack(62719);
+
+                    if(unitTarget->GetAura(64100))
+                        unitTarget->RemoveAuraFromStack(64100);
+
+                    if(Aura* defend = unitTarget->GetAura(66482))
+                        defend->ModStackAmount(-1);
+                    return;
+                }
                 // Shadow Flame (All script effects, not just end ones to prevent player from dodging the last triggered spell)
                 case 22539:
                 case 22972:
@@ -5390,8 +5339,10 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 }
                 case 66545: //Summon Memory
                 {
-                    uint32 memorySpells[25] = {66704, 66705, 66706, 66707, 66709, 66710, 66711, 66712, 66713, 66714, 66715, 66708, 66691, 66692, 66694, 66695, 66696, 66697, 66698, 66699, 66700, 66701, 66702, 66703, 66543};
-                    m_caster->CastSpell(unitTarget, memorySpells[urand(0, 24)], true);
+                    uint8 uiRandom = urand(0, 25);
+                    uint32 uiSpells[26] = {66704, 66705, 66706, 66707, 66709, 66710, 66711, 66712, 66713, 66714, 66715, 66708, 66708, 66691, 66692, 66694, 66695, 66696, 66697, 66698, 66699, 66700, 66701, 66702, 66703, 66543};
+
+                    m_caster->CastSpell(m_caster, uiSpells[uiRandom], true);
                     break;
                 }
                 case 45668:                                 // Ultra-Advanced Proto-Typical Shortening Blaster
