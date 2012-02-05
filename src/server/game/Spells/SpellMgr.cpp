@@ -3059,6 +3059,7 @@ void SpellMgr::LoadDbcDataCorrections()
             case 61588: // Blazing Harpoon
             case 52479: // Gift of the Harvester
             case 48246: // Ball of Flame
+            case 66545: // Summon Memory
                 spellInfo->MaxAffectedTargets = 1;
                 break;
             case 41376: // Spite
@@ -3271,6 +3272,10 @@ void SpellMgr::LoadDbcDataCorrections()
                 break;
             case 61719: // Easter Lay Noblegarden Egg Aura - Interrupt flags copied from aura which this aura is linked with
                 spellInfo->AuraInterruptFlags = AURA_INTERRUPT_FLAG_HITBYSPELL | AURA_INTERRUPT_FLAG_TAKE_DAMAGE;
+                break;
+            case 68282: // Charge
+                spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
+                spellInfo->EffectTriggerSpell[1] = 43807;
                 break;
             // ULDUAR SPELLS
             //
