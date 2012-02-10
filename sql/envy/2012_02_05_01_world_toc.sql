@@ -12,11 +12,11 @@ INSERT INTO `spell_linked_spell` VALUES
 
 DELETE FROM `conditions` WHERE SourceTypeOrReferenceId = 13 AND SourceEntry IN (66905, 67705, 67715, 66798);
 INSERT INTO `conditions` VALUES
-(13, 0, 66905, 0, 18, 1, 35119, 0, 0, '', 'Eadric Hammer of Rigtheous'), -- Target Eadric with Hammer of Righteous
-(13, 0, 66798, 0, 18, 1, 35005, 0, 0, '', 'The Black Kinght - Deaths Respite'),
-(13, 0, 66798, 0, 18, 1, 35004, 0, 0, '', 'The Black Kinght - Deaths Respite'),
-(13, 0, 67705, 0, 18, 2, 35005, 0, 0, '', 'The Black Kinght - Raise Arelas Brightstar'),
-(13, 0, 67715, 0, 18, 2, 35004, 0, 0, '', 'The Black Kinght - Raise Arelas Brightstar');
+(13,0,66905,0,18,1,35119,0,0,0,'','Eadric Hammer of Rigtheous'), -- Target Eadric with Hammer of Righteous
+(13,0,66798,0,18,1,35005,0,0,0,'','The Black Kinght - Deaths Respite'),
+(13,0,66798,0,18,1,35004,0,0,0,'','The Black Kinght - Deaths Respite'),
+(13,0,67705,0,18,2,35005,0,0,0,'','The Black Kinght - Raise Arelas Brightstar'),
+(13,0,67715,0,18,2,35004,0,0,0,'','The Black Kinght - Raise Arelas Brightstar');
 
 -- Achievements
 DELETE FROM achievement_criteria_data WHERE criteria_id IN (11863, 11420, 12439, 11858);
