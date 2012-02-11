@@ -636,9 +636,9 @@ SQLDriverQueryLogging = 0
 #                     13 - Lcyan
 #                     14 - White
 #        Example:     "13 11 9 5" - (Enabled)
-#        Default:     ""          - (Disabled)
+#        Default:     "13 11 9 5"          - (Disabled)
 
-LogColors = ""
+LogColors = "13 11 9 5"
 
 #
 #    EnableLogDB
@@ -1379,7 +1379,7 @@ BeepAtStart = 1
 #        Example:     "Welcome to John\'s Server@This server runs on Trinity Core."
 #        Default:     "Welcome to a Trinity Core server."
 
-Motd = "Welcome to a Trinity Core server."
+Motd = "Bienvenue sur World of Warcraft. Bon jeu !"
 
 #
 #    Server.LoginInfo
@@ -1410,7 +1410,7 @@ AllowTickets = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled, Experimental as of still being in development)
 
-DungeonFinder.Enable = 0
+DungeonFinder.Enable = 1
 
 #
 #   DBC.EnforceItemAttributes
@@ -2451,7 +2451,7 @@ Arena.RatingDiscardTimer = 600000
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-Arena.AutoDistributePoints = 0
+Arena.AutoDistributePoints = 1
 
 #
 #    Arena.AutoDistributeInterval
@@ -2743,7 +2743,7 @@ Guild.AllowMultipleGuildMaster = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-ShowKickInWorld = 0
+ShowKickInWorld = 1
 
 #
 #     RecordUpdateTimeDiffInterval

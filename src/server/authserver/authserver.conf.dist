@@ -148,9 +148,9 @@ LogFileLevel = 0
 #                     13 - Lcyan
 #                     14 - White
 #        Example:     "13 11 9 5" - (Enabled)
-#        Default:     ""          - (Disabled)
+#        Default:     "13 11 9 5"          - (Disabled)
 
-LogColors = ""
+LogColors = "13 11 9 5"
 
 #
 #    EnableLogDB
@@ -201,7 +201,7 @@ RealmsStateUpdateDelay = 20
 #        Default:     0  - (Disabled)
 #                     1+ - (Enabled)
 
-WrongPass.MaxCount = 0
+WrongPass.MaxCount = 10
 
 #
 #    WrongPass.BanTime
@@ -217,7 +217,7 @@ WrongPass.BanTime = 600
 #        Default:     0 - (Ban IP)
 #                     1 - (Ban Account)
 
-WrongPass.BanType = 0
+WrongPass.BanType = 1
 
 #
 ###################################################################################################
