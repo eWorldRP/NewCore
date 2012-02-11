@@ -30,6 +30,8 @@
 #include "CreatureAI.h"
 #include "MapManager.h"
 #include "BattlegroundIC.h"
+#include "OutdoorPvPMgr.h"
+#include "OutdoorPvPWG.h"
 
 bool IsPrimaryProfessionSkill(uint32 skill)
 {
@@ -1126,6 +1128,26 @@ bool SpellArea::IsFitToRequirements(Player const* player, uint32 newZone, uint32
                 return false;
             if (!player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY))
                 return false;
+            break;
+        }
+        case 58730: // No fly Zone - Wintergrasp
+        {
+            if (!player)
+                return false;
+
+            if (sWorld->getBoolConfig(CONFIG_OUTDOORPVP_WINTERGRASP_ENABLED))
+            {
+                OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(4197);
+                if ((pvpWG->isWarTime()==false) || player->isDead() || player->HasAura(45472) || player->HasAura(44795) || player->GetPositionZ() > 619.2f || player->isInFlight() || (!player->HasAuraType(SPELL_AURA_MOD_INCREASE_MOUNTED_FLIGHT_SPEED) && !player->HasAuraType(SPELL_AURA_FLY)))
+                    return false;
+            }
+             break;
+        }
+        case 58045: // Essence of Wintergrasp - Wintergrasp
+        case 57940: // Essence of Wintergrasp - Northrend
+        {
+            if (!player || player->GetTeamId() != sWorld->getWorldState(WORLDSTATE_WINTERGRASP_CONTROLING_FACTION))
+            return false;
             break;
         }
         case 68719: // Oil Refinery - Isle of Conquest.
@@ -2877,7 +2899,6 @@ void SpellMgr::LoadSpellCustomAttr()
             case 53454: // Impale
             case 59446: // Impale
             case 62383: // Shatter
-            case 68284: // Charge
             case 64777: // Machine Gun
             case 65239: // Machine Gun
             case 65919: // Impale
@@ -3315,28 +3336,6 @@ void SpellMgr::LoadDbcDataCorrections()
                 spellInfo->EffectImplicitTargetB[2] = TARGET_UNIT_NEARBY_ENTRY;
                 break;
             // ENDOF ULDUAR SPELLS
-            //
-            // TRIAL OF THE CHAMPION SPELLS
-            case 68284: // ToC5 Charge
-                spellInfo->Effect[1] = SPELL_EFFECT_SCHOOL_DAMAGE;
-                spellInfo->EffectBasePoints[1] = 20000;
-                spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ENEMY;
-                break;
-            case 68282: // ToC5 Charge
-                spellInfo->Effect[1] = 0;
-                break;
-            case 67705: // Raise Arelas Birhgtstar
-            case 67715: // Raise Jaeren Sunworn
-                spellInfo->AttributesEx2 |= SPELL_ATTR2_CAN_TARGET_DEAD;
-                break;
-            case 67782: // Desecration
-                spellInfo->rangeIndex = EFFECT_RADIUS_2_YARDS;
-                spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_SRC_AREA_ENEMY;
-                break;
-            case 66545:
-                spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
-                break;
-            // ENDOF TRIAL OF THE CHAMPION SPELLS
             //
             // TRIAL OF THE CRUSADER SPELLS
             //

@@ -54,6 +54,7 @@ class Vehicle
         void RemoveAllPassengers();
         void Dismiss();
         bool IsVehicleInUse() { return Seats.begin() != Seats.end(); }
+        void Relocate(Position pos);
 
         SeatMap Seats;
 

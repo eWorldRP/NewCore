@@ -220,7 +220,7 @@ bool GameObject::Create(uint32 guidlow, uint32 name_id, Map* map, uint32 phaseMa
 
     SetGoArtKit(0);                                         // unknown what this is
     SetByteValue(GAMEOBJECT_BYTES_1, 2, artKit);
-    
+
 
     switch (goinfo->type)
     {
@@ -460,6 +460,11 @@ void GameObject::Update(uint32 diff)
                         // some traps do not have spell but should be triggered
                         if (goInfo->trap.spellId)
                             CastSpell(ok, goInfo->trap.spellId);
+
+                        // allow to use scripts
+                        if (ok->GetTypeId() == TYPEID_PLAYER)
+                            if (sScriptMgr->OnGossipHello(ok->ToPlayer(), this))
+                                return;
 
                         m_cooldownTime = time(NULL) + (goInfo->trap.cooldown ? goInfo->trap.cooldown :  uint32(4));   // template or 4 seconds
 
@@ -1862,6 +1867,8 @@ void GameObject::SetDestructibleState(GameObjectDestructibleState state, Player*
             if (DestructibleModelDataEntry const* modelData = sDestructibleModelDataStore.LookupEntry(m_goInfo->building.destructibleData))
                 if (modelData->DestroyedDisplayId)
                     modelId = modelData->DestroyedDisplayId;
+            //WG Temporary hack for Fortress towers when it cannot be damaged after been half damaged
+            if (m_goInfo->entry != 190378 && m_goInfo->entry != 190377 && m_goInfo->entry != 190373 && m_goInfo->entry != 190221)
             SetDisplayId(modelId);
 
             if (setHealth)
@@ -1901,8 +1908,8 @@ void GameObject::SetLootState(LootState state, Unit* unit)
     {
         // startOpen determines whether we are going to add or remove the LoS on activation
         bool startOpen = (GetGoType() == GAMEOBJECT_TYPE_DOOR || GetGoType() == GAMEOBJECT_TYPE_BUTTON ? GetGOInfo()->door.startOpen : false);
-        
-        if (GetGOData()->go_state == GO_NOT_READY)
+
+        if (GetGOData() && GetGOData()->go_state == GO_NOT_READY)
             startOpen = !startOpen;
 
         if (state == GO_ACTIVATED || state == GO_JUST_DEACTIVATED)
@@ -1923,7 +1930,7 @@ void GameObject::SetGoState(GOState state)
         // startOpen determines whether we are going to add or remove the LoS on activation
         bool startOpen = (GetGoType() == GAMEOBJECT_TYPE_DOOR || GetGoType() == GAMEOBJECT_TYPE_BUTTON ? GetGOInfo()->door.startOpen : false);
 
-        if (GetGOData()->go_state == GO_NOT_READY)
+        if (GetGOData() && GetGOData()->go_state == GO_NOT_READY)
             startOpen = !startOpen;
 
         if (state == GO_STATE_ACTIVE || state == GO_STATE_ACTIVE_ALTERNATIVE)
@@ -1949,7 +1956,7 @@ void GameObject::EnableCollision(bool enable)
 {
     if (!m_model)
         return;
-    
+
     /*if (enable && !GetMap()->Contains(*m_model))
         GetMap()->Insert(*m_model);*/
 

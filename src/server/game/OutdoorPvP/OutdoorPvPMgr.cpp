@@ -63,7 +63,7 @@ void OutdoorPvPMgr::InitOutdoorPvP()
         if (DisableMgr::IsDisabledFor(DISABLE_TYPE_OUTDOORPVP, typeId, NULL))
             continue;
 
-        if (typeId >= MAX_OUTDOORPVP_TYPES)
+    if (typeId >= MAX_OUTDOORPVP_TYPES)
         {
             sLog->outErrorDb("Invalid OutdoorPvPTypes value %u in outdoorpvp_template; skipped.", typeId);
             continue;

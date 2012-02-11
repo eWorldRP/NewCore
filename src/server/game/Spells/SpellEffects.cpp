@@ -63,6 +63,7 @@
 #include "GameObjectAI.h"
 #include "AccountMgr.h"
 #include "InstanceScript.h"
+#include "OutdoorPvPWG.h"
 
 pEffect SpellEffects[TOTAL_SPELL_EFFECTS]=
 {
@@ -3048,7 +3049,7 @@ void Spell::EffectSummonType(SpellEffIndex effIndex)
     uint32 numSummons;
 
     // some spells need to summon many units, for those spells number of summons is stored in effect value
-    // however so far noone found a generic check to find all of those (there's no related data in summonproperties.dbc 
+    // however so far noone found a generic check to find all of those (there's no related data in summonproperties.dbc
     // and in spell attributes, possibly we need to add a table for those)
     // so here's a list of MiscValueB values, which is currently most generic check
     switch (properties->Id)
@@ -4458,6 +4459,23 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
         {
             switch (m_spellInfo->Id)
             {
+                // Teleport to Lake Wintergrasp
+                case 58622:
+                {
+                  if (OutdoorPvPWG *pvpWG = (OutdoorPvPWG*)sOutdoorPvPMgr->GetOutdoorPvPToZoneId(4197))
+                     if (unitTarget->getLevel() > 74)
+                     {
+                       if ((pvpWG->getDefenderTeam()==TEAM_ALLIANCE) && (unitTarget->ToPlayer()->GetTeam() == ALLIANCE))
+                          unitTarget->CastSpell(unitTarget, SPELL_TELEPORT_FORTRESS, true);
+                       else if ((pvpWG->getDefenderTeam()==TEAM_ALLIANCE) && (unitTarget->ToPlayer()->GetTeam() == HORDE))
+                          unitTarget->CastSpell(unitTarget, SPELL_TELEPORT_HORDE_CAMP, true);
+                       else if ((pvpWG->getDefenderTeam()!=TEAM_ALLIANCE) && (unitTarget->ToPlayer()->GetTeam() == HORDE))
+                          unitTarget->CastSpell(unitTarget, SPELL_TELEPORT_FORTRESS, true);
+                       else if ((pvpWG->getDefenderTeam()!=TEAM_ALLIANCE) && (unitTarget->ToPlayer()->GetTeam() == ALLIANCE))
+                          unitTarget->CastSpell(unitTarget, SPELL_TELEPORT_ALLIENCE_CAMP, true);
+                     }
+                    return;
+                }
                 // Glyph of Backstab
                 case 63975:
                 {
@@ -4556,47 +4574,6 @@ void Spell::EffectScriptEffect(SpellEffIndex effIndex)
                 case 26465:
                     unitTarget->RemoveAuraFromStack(26464);
                     return;
-                // Shield-Breaker - Argent Tournament
-                case 62575:
-                {
-                    if(m_caster->GetOwner())
-                        m_caster->GetOwner()->CastSpell(unitTarget,62626,true );
-                    else
-                        m_caster->CastSpell(unitTarget,62626,true );
-                        return;
-                }
-                case 62960:
-                {
-                    if (!unitTarget)
-                        return;
-                    m_caster->CastSpell(unitTarget,62563,true );
-                    m_caster->CastSpell(unitTarget,68321,true );
-                    return;
-                }
-                // Charge - Argent Tournament
-                case 68282:
-                {
-                    if (!unitTarget)
-                        return;
-                    m_caster->CastSpell(unitTarget,68284,true);
-                }
-                // Shield-Breaker - Argent Tournament
-                case 62626:
-                // Charge - Argent Tournament
-                case 68321:
-                {
-                    if(!unitTarget)
-                        return;
-                    if (unitTarget->GetAura(62719))
-                        unitTarget->RemoveAuraFromStack(62719);
-
-                    if(unitTarget->GetAura(64100))
-                        unitTarget->RemoveAuraFromStack(64100);
-
-                    if(Aura* defend = unitTarget->GetAura(66482))
-                        defend->ModStackAmount(-1);
-                    return;
-                }
                 // Shadow Flame (All script effects, not just end ones to prevent player from dodging the last triggered spell)
                 case 22539:
                 case 22972:
@@ -5732,7 +5709,7 @@ void Spell::EffectSummonPlayer(SpellEffIndex /*effIndex*/)
         return;
 
     float x, y, z;
-    m_caster->GetClosePoint(x, y, z, unitTarget->GetObjectSize());
+    m_caster->GetPosition(x, y, z);
 
     unitTarget->ToPlayer()->SetSummonPoint(m_caster->GetMapId(), x, y, z);
 
@@ -7183,7 +7160,7 @@ void Spell::SummonGuardian(uint32 i, uint32 entry, SummonPropertiesEntry const* 
 
     float radius = 5.0f;
     int32 duration = m_spellInfo->GetDuration();
-    
+
     if (Player* modOwner = m_originalCaster->GetSpellModOwner())
         modOwner->ApplySpellMod(m_spellInfo->Id, SPELLMOD_DURATION, duration);
 

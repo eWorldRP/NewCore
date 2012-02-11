@@ -381,33 +381,6 @@ void Map::LoadGrid(float x, float y)
     EnsureGridLoaded(Cell(x, y));
 }
 
-void Map::SendInitTransportsInInstance(Player* player)
-{
-    // Hack to send out transports
-    MapManager::TransportMap& tmap = sMapMgr->m_TransportsByInstanceIdMap;
-
-    // no transports at map
-    if (tmap.find(player->GetInstanceId()) == tmap.end())
-        return;
-
-    UpdateData transData;
-
-    MapManager::TransportSet& tset = tmap[player->GetInstanceId()];
-
-    for (MapManager::TransportSet::const_iterator i = tset.begin(); i != tset.end(); ++i)
-    {
-        // send data for current transport in other place
-        if ((*i) != player->GetTransport() && (*i)->GetInstanceId() == GetInstanceId())
-        {
-            (*i)->BuildCreateUpdateBlockForPlayer(&transData, player);
-        }
-    }
-
-    WorldPacket packet;
-    transData.BuildPacket(&packet);
-    player->GetSession()->SendPacket(&packet);
-}
-
 bool Map::AddPlayerToMap(Player* player)
 {
     CellCoord cellCoord = Trinity::ComputeCellCoord(player->GetPositionX(), player->GetPositionY());
@@ -428,10 +401,6 @@ bool Map::AddPlayerToMap(Player* player)
 
     SendInitSelf(player);
     SendInitTransports(player);
-
-    // And send init transport in instance
-    if (Instanceable())
-        SendInitTransportsInInstance(player);
 
     player->m_clientGUIDs.clear();
     player->UpdateObjectVisibility(false);
@@ -699,7 +668,8 @@ void Map::RemovePlayerFromMap(Player* player, bool remove)
     if (remove)
         DeleteFromWorld(player);
 
-    sScriptMgr->OnPlayerLeaveMap(this, player);
+    if (remove)
+        sScriptMgr->OnPlayerLeaveMap(this, player);
 }
 
 template<class T>
@@ -1629,8 +1599,17 @@ float Map::GetHeight(float x, float y, float z, bool checkVMap /*= true*/, float
         else
             return vmapHeight;                              // we have only vmapHeight (if have)
     }
+    else
+    {
+        if (!checkVMap)
+            return mapHeight;                               // explicitly use map data (if have)
+        else if (mapHeight > INVALID_HEIGHT && (z < mapHeight + 2 || z == MAX_HEIGHT))
+            return mapHeight;                               // explicitly use map data if original z < mapHeight but map found (z+2 > mapHeight)
+        else
+            return VMAP_INVALID_HEIGHT_VALUE;               // we not have any height
+    }
 
-    return mapHeight;                               // explicitly use map data
+    //return mapHeight;                               // explicitly use map data
 }
 
 inline bool IsOutdoorWMO(uint32 mogpFlags, int32 /*adtId*/, int32 /*rootId*/, int32 /*groupId*/, WMOAreaTableEntry const* wmoEntry, AreaTableEntry const* atEntry)

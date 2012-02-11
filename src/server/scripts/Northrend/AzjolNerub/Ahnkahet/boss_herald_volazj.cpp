@@ -48,7 +48,7 @@ enum Yells
     SAY_AGGRO                                     = 0,
     SAY_SLAY                                      = 1,
     SAY_DEATH                                     = 2,
-    SAY_PHASE                                     = 3
+    SAY_PHASE                                     = 3    // ?
 };
 
 enum Achievements

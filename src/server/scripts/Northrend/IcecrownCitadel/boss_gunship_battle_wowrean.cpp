@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2008-2010 Trinity <http://www.trinitycore.org/>
+ * Copyright (C) 2008-2012 Trinity <http://www.trinitycore.org/>
+ * Copyright (C) 2010-2012 WoWRean <http://www.wowrean.es/>
+ * Copyright (C) 2009-2012 Eilo <https://github.com/eilo/>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +24,14 @@
 #include "Vehicle.h"
 #include "Group.h"
 
+// Logros, esto veremos despues
 enum eAchievements
 {
     IM_ON_A_BOAT_10    = 4536,
-    IM_ON_A_BOAT_25    = 4612
+    IM_ON_A_BOAT_25    = 4612,
 };
 
+// Eventos o fases de la script
 enum Actions
 {
     ACTION_INTRO_START             = 1,
@@ -39,37 +43,12 @@ enum Actions
     ACTION_FAIL                    = 7,
 };
 
+// Vamos a ver, spells pero no todas estan bien, (PARA LUEGO)
 enum Spells
 {
-    SPELL_BURNING_PITCH_A             = 71335,
-    SPELL_BURNING_PITCH_H             = 71339,
-    SPELL_BURNING_PITCH_SIEGE_DMG_A   = 70383,
-    SPELL_BURNING_PITCH_SIEGE_DMG_H   = 70374,
-    SPELL_BURNING_PITCH_AOE_DAMAGE    = 69660,
+/* -------- *Muralla de las calaveras* ------- */
+        // AQUI VA LAS SPELLS DEL TRASH //
 
-    SPELL_WOUNDING_STRIKE_10_NM       = 69651,
-    SPELL_WOUNDING_STRIKE_10_HM       = 72570,
-    SPELL_WOUNDING_STRIKE_25_NM       = 72569,
-    SPELL_WOUNDING_STRIKE_25_HM       = 72571,
-
-    SPELL_TELEPORT_VISUAL             = 64446,
-    SPELL_BLADESTORM                  = 69652,
-    SPELL_BLADESTORM_TRIGGER          = 69653,
-
-    // Cannon
-    SPELL_HEAT_DRAIN                  = 69470,
-    SPELL_OVERHEAT                    = 69487, // Triggers spell #69488 every 0.25s. It should consume 10 Energy but does not.
-    SPELL_CANNON_BLAST                = 69399,
-    SPELL_INCINERATING_BLAST          = 69401,
-
-    // Auras
-    SPELL_ON_ORGRIMS_HAMMERS_DECK     = 70121,
-    SPELL_ON_SKYBREAKERS_DECK         = 70120,
-
-    // Achievement spell required target
-    SPELL_ACHIEVEMENT                 = 72959,
-
-    // Rampart of Skulls NPCs Spells
     // Kor'kron Primalist
     SPELL_WRATH                       = 69968,
     SPELL_HEALING_TOUCH               = 69899,
@@ -95,11 +74,33 @@ enum Spells
     SPELL_BLIZZARD                    = 70362,
     SPELL_FROST_CLEAVE                = 70361,
 
-    // Muradin Bronzebeard / High Overlord Saurfang
-    SPELL_CLEAVE                      = 15284,
-    SPELL_RENDING_THROW               = 70309,
-    SPELL_TASTE_OF_BLOOD              = 69634,
+/* ------------ Spells de la pelea ------------- */
+    SPELL_BURNING_PITCH_A             = 71335,
+    SPELL_BURNING_PITCH_H             = 71339,
+    SPELL_BURNING_PITCH_SIEGE_DMG_A   = 70383,
+    SPELL_BURNING_PITCH_SIEGE_DMG_H   = 70374,
+    SPELL_BURNING_PITCH_AOE_DAMAGE    = 69660,
 
+    SPELL_WOUNDING_STRIKE_10_NM       = 69651,
+    SPELL_WOUNDING_STRIKE_10_HM       = 72570,
+    SPELL_WOUNDING_STRIKE_25_NM       = 72569,
+    SPELL_WOUNDING_STRIKE_25_HM       = 72571,
+
+    SPELL_TELEPORT_VISUAL             = 64446,
+    SPELL_BLADESTORM                  = 69652,
+    SPELL_BLADESTORM_TRIGGER          = 69653,
+
+    // Cannon
+    SPELL_HEAT_DRAIN                  = 69470,
+    SPELL_OVERHEAT                    = 69487, // Triggers spell #69488 every 0.25s. It should consume 10 Energy but does not.
+    SPELL_CANNON_BLAST                = 69399,
+    SPELL_INCINERATING_BLAST          = 69401,
+
+    // Auras
+    SPELL_ON_ORGRIMS_HAMMERS_DECK     = 70121,
+    SPELL_ON_SKYBREAKERS_DECK         = 70120,
+
+/* ------------- Algunas spells de Adds -------------- */
     // Kor'kron Battle-mage & Skybreaker Sorcerer
     SPELL_BELOW_ZERO                  = 69705,
     SPELL_SHADOW_CHANNELING           = 45104,
@@ -124,16 +125,28 @@ enum Spells
     SPELL_ROCKET_ARTILLERY_ALLIANCE   = 70609,
     SPELL_EXPLOSION                   = 69680,
 
+/* ------------- Spell bosses ------------ */
+    // Muradin Bronzebeard / High Overlord Saurfang
+    SPELL_CLEAVE                      = 15284,
+    SPELL_RENDING_THROW               = 70309,
+    SPELL_TASTE_OF_BLOOD              = 69634,
+
+/* -------------- Spells Efectos ------------- */
     // Ship Explsion
     SPELL_SHIP_EXPLOSION              = 72137,
 
     // Remove Rocket Packs
     SPELL_REMOVE_ROCKET_PACK          = 70713,
 
+/* ---------------- Logros ----------------- */
+    // Achievement spell required target
+    SPELL_ACHIEVEMENT                 = 72959,
+
     // Achievements
     SPELL_ACHIEVEMENT_CHECK           = 72959,
 };
 
+// AQUI PONERLE OJO A COMO QUEREMOS QUE QUEDE
 enum Events
 {
     EVENT_NULL,
@@ -231,6 +244,7 @@ enum Events
     EVENT_RESPAWN_ROCKETEER,
 };
 
+// Textos: Traducir y apañar
 enum Texts
 {
     // Kor'kron Primalist
@@ -300,6 +314,8 @@ enum Texts
     SAY_BOARDING_SKYBREAKER_MURADIN       = 1,
 };
 
+// ****OJO****
+// Hay que ver si en primer lugar estan volando estos 2
 Position const FrostWyrmPosH   = {-435.429f, 2077.556f, 219.1148f, 4.767166f};
 Position const FrostWyrmPosA   = {-437.409f, 2349.026f, 219.1148f, 1.483120f};
 
@@ -308,9 +324,18 @@ struct mortarMarksLoc
     uint32 durationBeforeRefreshing;
     Position location;
 };
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* -------------------------- HOOKS ESPECIALES Y LOCALES PARA EL FUNCIONAMIENTO DEL SCRIPT ----------------------------- */
+/* --------------------------------------------------------------------------------------------------------------------- */
 
-
-//Function find player special for Gunship battle
+// Aqui hay que ponerle mucho ojo a las funciones porque algunas hacen uso del mapa
+// sin tener en cuenta la grilla o las criaturas con caracteristicas especiales
+// ahora ya sabemos de que van, y lo primero es verificar el AI de los npcs, si no
+// se comportan como deben, entonces habra que retocar estas 3 funciones para localizar
+// sus respectivos targets y demas.
+//                 |
+//                 |
+//                 V
 typedef std::list<Player*> TPlayerLists;
 
 TPlayerLists GetPlayersInTheMaps(Map *pMap)
@@ -339,19 +364,10 @@ Player* SelectRandomPlayerInTheMaps(Map* pMap)
     return SelectRandomPlayerFromLists(players);
 }
 
-//Function start motion of the ship
-void StartFlyShip(Transport* t)
+// Funcion para Aplicar el movimiento en el cliente
+void UpdateTransportMotionInMap(Transport* t)
 {
-    t->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
-    t->SetGoState(GO_STATE_ACTIVE);
-    t->SetUInt32Value(GAMEOBJECT_DYNAMIC, 0x10830010); // Seen in sniffs
-    t->SetFloatValue(GAMEOBJECT_PARENTROTATION + 3, 1.0f);
-
     Map* map = t->GetMap();
-    std::set<uint32> mapsUsed;
-    GameObjectTemplate const* goinfo = t->GetGOInfo();
-
-    t->GenerateWaypoints(goinfo->moTransport.taxiPathId, mapsUsed);
 
     for (Map::PlayerList::const_iterator itr = map->GetPlayers().begin(); itr != map->GetPlayers().end(); ++itr)
     {
@@ -366,6 +382,22 @@ void StartFlyShip(Transport* t)
     }
 }
 
+//Function start motion of the ship
+void StartFlyShip(Transport* t)
+{
+    t->BuildStartMovePacket(t->GetMap());
+    t->SetUInt32Value(GAMEOBJECT_DYNAMIC, 0x10830010); // Seen in sniffs
+    t->SetFloatValue(GAMEOBJECT_PARENTROTATION + 3, 1.0f);
+
+    std::set<uint32> mapsUsed;
+    GameObjectTemplate const* goinfo = t->GetGOInfo();
+
+    t->GenerateWaypoints(goinfo->moTransport.taxiPathId, mapsUsed);
+
+    UpdateTransportMotionInMap(t);
+}
+
+// A este Relocate hay que ponerle atencion para despues
 void RelocateTransport(Transport* t)
 {
     Map* map = t->GetMap();
@@ -398,32 +430,20 @@ void RelocateTransport(Transport* t)
                 t->Relocate(-435.854156f, 2475.328125f, 449.364105f);
             break;
     }
-
-    t->Update(0);
-    t->UpdateNPCPositions(); 
+    // Chequear cada 100ms la AI de la nave y su actualizacion.
+    t->Update(100);
 }
-
 
 //Function stop motion of the ship
 void StopFlyShip(Transport* t)
 {
-    Map* map = t->GetMap();
     t->m_WayPoints.clear();
     RelocateTransport(t);
-    t->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_IN_USE);
-    t->SetGoState(GO_STATE_READY);
+    t->BuildStopMovePacket(t->GetMap());
 
-    for (Map::PlayerList::const_iterator itr = map->GetPlayers().begin(); itr != map->GetPlayers().end(); ++itr)
-    {
-        if (Player* pPlayer = itr->getSource())
-        {
-            UpdateData transData;
-            t->BuildCreateUpdateBlockForPlayer(&transData, pPlayer);
-            WorldPacket packet;
-            transData.BuildPacket(&packet);
-            pPlayer->SendDirectMessage(&packet);
-        }
-    }
+    UpdateTransportMotionInMap(t);
+    // Actualizando sus estados antes de bajarse.
+    t->UpdatePlayerPositions();
 }
 
 //Find Unfriendy transport
@@ -435,7 +455,7 @@ Transport* CheckUnfriendlyShip(Creature* me, InstanceScript* instance, uint32 da
         return NULL;
 }
 
-//Teleport players
+//Teleport players  <----------------- Esto es para cuando se reinicia el evento, al mapa de icc
 void TeleportPlayers(Map* map, uint64 TeamInInstance)
 {
     if(map)
@@ -460,7 +480,7 @@ void TeleportPlayers(Map* map, uint64 TeamInInstance)
     }
 }
 
-//Ship explosion
+//Ship explosion <-- Aqui cuando se termina o cuando wipeas :S
 void DoShipExplosion(Transport* t)
 {
     for (Transport::CreatureSet::iterator itr = t->m_NPCPassengerSet.begin(); itr != t->m_NPCPassengerSet.end();)
@@ -488,6 +508,7 @@ bool DoWipeCheck(Transport* t)
     return false;
 }
 
+// ****OJO**** Aqui se puede hacer cosillas adicionales para npcs en algun caso
 //Check falling players
 void DoCheckFallingPlayer(Creature* me)
 {
@@ -510,7 +531,9 @@ void DoCheckFallingPlayer(Creature* me)
     }
 }
 
-//Restart event
+// ***** OJO *****
+// Esta parte de la script es una mierda, hay que mirar como spamearlo de otra manera, lo mismo que en el preparegunshipevent();
+// Restart event
 void RestartEvent(Transport* t1, Transport* t2, Map* instance, uint64 TeamInInstance)
 {
     sMapMgr->UnLoadTransportFromMap(t1);
@@ -667,7 +690,7 @@ void RestartEvent(Transport* t1, Transport* t2, Map* instance, uint64 TeamInInst
                             t->AddNPCPassengerInInstance(NPC_GB_SKYBREAKER_MORTAR_SOLDIER, -20.9583f, 14.8875f, 20.4428f, 4.77865f);
                         }
                     }
-                 
+                
                     if(Transport* th = sMapMgr->LoadTransportInMap(instance,GO_ORGRIM_S_HAMMER_HORDE_ICC, 77800))
                     {
                         th->AddNPCPassengerInInstance(NPC_GB_ORGRIMS_HAMMER, 1.845810f, 1.268872f, 34.526218f, 1.5890f);
@@ -705,7 +728,7 @@ void RestartEvent(Transport* t1, Transport* t2, Map* instance, uint64 TeamInInst
 
 }
 
-//Stop Fight
+//Stop Fight <-- Aqui es donde mueren los npcs luego que esta explotando la nave y te saca del barco antes de reiniciar
 void StopFight(Transport* t1, Transport* t2)
 {
     Map* map = t1->GetMap();
@@ -742,7 +765,18 @@ void StopFight(Transport* t1, Transport* t2)
     }
 }
 
-//Muradin Bronzebeard
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* ------------------                   DESDE AQUI LOS BOSSES/NPCS aqui esta lo guapo :)                ---------------- */
+/* --------------------------------------------------------------------------------------------------------------------- */
+
+// Esto en gran parte esta bien, es mas que nada scriptar el comportamiento
+// de todos y cada uno de los npcs, y bosses relativos a la pelea, es decir
+// para estar mas seguros esto primero hay que probarlo en tierra o en la caja
+// de testeos, de manera que se evidencie que los mismos esten ejecutando todas
+// y cada una de las cosas para lo que se supone que estan, porque ya se ha visto
+// que algunas cosas falta corregir, pero esto lo dejaremos para luego.
+
+// Gunship: Aqui va Muradin Bronzebeard el barbon
 class npc_muradin_gunship : public CreatureScript
 {
     public:
@@ -830,7 +864,7 @@ class npc_muradin_gunship : public CreatureScript
 
             bool CanAIAttack(Unit const* target) const
             {
-                if (target->GetTypeId() == TYPEID_PLAYER || target->GetEntry() == NPC_GB_KORKRON_SERGANTE || target->GetEntry() == NPC_GB_KORKRON_REAVERS)
+                if (target->GetEntry() == NPC_GB_KORKRON_SERGANTE || target->GetEntry() == NPC_GB_KORKRON_REAVERS || target->GetTypeId() == TYPEID_PLAYER)
                     return true;
 
                 return false;
@@ -976,7 +1010,7 @@ class npc_muradin_gunship : public CreatureScript
                     switch (eventId)
                     {
                         case EVENT_WIPE_CHECK:
-                            DoCheckFallingPlayer(me);
+                            //DoCheckFallingPlayer(me);
                             if (DoWipeCheck(skybreaker))
                                 events.ScheduleEvent(EVENT_WIPE_CHECK, 3000);
                             else
@@ -1030,7 +1064,7 @@ class npc_muradin_gunship : public CreatureScript
                             break;
                         case EVENT_RENDING_THROW:
                             if (UpdateVictim())
-                                if (me->getVictim()/*->IsWithinDistInMap(me, 50.0f, false)*/) // Todo: Fix the distance
+                                if (me->getVictim()->IsWithinDistInMap(me, 50.0f, false)) // Todo: Fix the distance
                                 {
                                     DoCastVictim(SPELL_RENDING_THROW);
                                     EventScheduled = false;
@@ -1049,7 +1083,7 @@ class npc_muradin_gunship : public CreatureScript
                             {
                                 pSaurfang->AI()->Talk(SAY_BOARDING_SKYBREAKER_SAURFANG);
                             }
-                            if(Creature* Sergante = skybreaker->AddNPCPassengerInInstance(NPC_GB_KORKRON_SERGANTE, -15.51547f, -0.160213f, 26.87252f, 1.56211f))
+                            if(Creature* Sergante = skybreaker->AddNPCPassengerInInstance(NPC_GB_KORKRON_SERGANTE, -15.51547f, -0.160213f, 20.87252f, 1.56211f))
                             {
                                 Sergante->CastSpell(Sergante, SPELL_TELEPORT_VISUAL, true);
                             }
@@ -1060,7 +1094,7 @@ class npc_muradin_gunship : public CreatureScript
                         case EVENT_BOARDING_REAVERS_MARINE:
                             if(count <= SummonCount)
                             {
-                                if(Creature* Reavers = skybreaker->AddNPCPassengerInInstance(NPC_GB_KORKRON_REAVERS, -15.51547f, -0.160213f, 26.87252f, 1.56211f))
+                                if(Creature* Reavers = skybreaker->AddNPCPassengerInInstance(NPC_GB_KORKRON_REAVERS, -15.51547f, -0.160213f, 20.87252f, 1.56211f))
                                 {
                                     Reavers->CastSpell(Reavers, SPELL_TELEPORT_VISUAL, true);
                                     events.ScheduleEvent(EVENT_BOARDING_REAVERS_MARINE, 21000 / SummonCount);
@@ -1320,7 +1354,7 @@ class npc_korkron_axethrower_rifleman : public CreatureScript
                     if (Creature* pSaurfangBoss = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_GB_HIGH_OVERLORD_SAURFANG)))
                         pSaurfangBoss->AI()->DoAction(ACTION_AXES_RIFL_DIE);
                 }
-                 
+                
                 if (_instance->GetData(DATA_TEAM_IN_INSTANCE) == HORDE)
                 {
                     if (Creature* pMuradin = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_GB_MURADIN_BRONZEBEARD)))
@@ -1667,7 +1701,7 @@ class npc_gunship_mage : public CreatureScript
                             {
                                 if (Vehicle* veh = (*itr)->GetVehicleKit())
                                     veh->RemoveAllPassengers();
-									
+                                                                      
                                 DoCast((*itr),SPELL_BELOW_ZERO,true);
                             }
                         }
@@ -1679,7 +1713,7 @@ class npc_gunship_mage : public CreatureScript
                             {
                                 if (Vehicle* veh = (*itr)->GetVehicleKit())
                                     veh->RemoveAllPassengers();
-									
+                                                                      
                                  DoCast((*itr),SPELL_BELOW_ZERO,true);
                             }
                         }
@@ -1697,7 +1731,7 @@ class npc_gunship_mage : public CreatureScript
                             pSaurfangBoss->AI()->DoAction(ACTION_MAGE_DIE);
                     }
                  }
-                 
+                
                  if (_instance->GetData(DATA_TEAM_IN_INSTANCE) == HORDE)
                  {
                      if (me->GetGUID() == _instance->GetData64(DATA_GB_BATTLE_MAGE))
@@ -1785,7 +1819,7 @@ class npc_gunship_cannon : public CreatureScript
                 {
                     me->RemoveAurasByType(SPELL_AURA_CONTROL_VEHICLE);
                     me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
-					
+                                      
                     if (Vehicle* veh = me->GetVehicleKit())
                         veh->RemoveAllPassengers();
                 }
@@ -1945,7 +1979,7 @@ class npc_zafod_boombox : public CreatureScript
         }
 };
 
-//
+// Gunship: Aqui va saurfang el del barco
 class npc_saurfang_gunship : public CreatureScript
 {
     public:
@@ -2030,7 +2064,7 @@ class npc_saurfang_gunship : public CreatureScript
 
             bool CanAIAttack(Unit const* target) const
             {
-                if (target->GetTypeId() == TYPEID_PLAYER || target->GetEntry() == NPC_GB_SKYBREAKER_SERGANTE || target->GetEntry() == NPC_GB_SKYBREAKER_MARINE)
+                if (target->GetEntry() == NPC_GB_SKYBREAKER_SERGANTE || target->GetEntry() == NPC_GB_SKYBREAKER_MARINE || target->GetTypeId() == TYPEID_PLAYER)
                     return true;
 
                 return false;
@@ -2158,7 +2192,7 @@ class npc_saurfang_gunship : public CreatureScript
                     {
                         me->SetHealth(me->GetMaxHealth() / 100 * 76); // find a better way to avoid the hardcore spell spam ....
                         DoCast(me, SPELL_TASTE_OF_BLOOD);
-                    } 
+                    }
 
                     if (UpdateVictim())
                     {
@@ -2229,7 +2263,7 @@ class npc_saurfang_gunship : public CreatureScript
                              {
                                  pSaurfang->AI()->Talk(SAY_BOARDING_SKYBREAKER_MURADIN);
                              }
-                             if (Creature* Sergante = orgrimmar->AddNPCPassengerInInstance(NPC_GB_SKYBREAKER_SERGANTE, 15.03016f, -7.00016f, 43.70952f, 1.55138f))
+                             if (Creature* Sergante = orgrimmar->AddNPCPassengerInInstance(NPC_GB_SKYBREAKER_SERGANTE, 15.03016f, -7.00016f, 37.70952f, 1.55138f))
                              {
                                  Sergante->CastSpell(Sergante, SPELL_TELEPORT_VISUAL, true);
                              }
@@ -2239,7 +2273,7 @@ class npc_saurfang_gunship : public CreatureScript
                         case EVENT_BOARDING_REAVERS_MARINE:
                             if(count <= SummonCount)
                             {
-                                if(Creature* Marine = orgrimmar->AddNPCPassengerInInstance(NPC_GB_SKYBREAKER_MARINE, 15.03016f, -7.00016f, 43.70952f, 1.55138f))
+                                if(Creature* Marine = orgrimmar->AddNPCPassengerInInstance(NPC_GB_SKYBREAKER_MARINE, 15.03016f, -7.00016f, 37.70952f, 1.55138f))
                                 {
                                     Marine->CastSpell(Marine, SPELL_TELEPORT_VISUAL, true);
                                     count++;
@@ -2273,7 +2307,7 @@ class npc_saurfang_gunship : public CreatureScript
                             break;
                         case EVENT_RENDING_THROW:
                             if (UpdateVictim())
-                                if (me->getVictim()/*->IsWithinDistInMap(me, 50.0f, false)*/) // Todo: Fix the distance
+                                if (me->getVictim()->IsWithinDistInMap(me, 50.0f, false)) // Todo: Fix the distance
                                 {
                                     DoCastVictim(SPELL_RENDING_THROW);
                                     EventScheduled = false;
@@ -2349,6 +2383,8 @@ class npc_saurfang_gunship : public CreatureScript
         }
 };
 
+// ***** OJO ******
+// Este portal no me gusta, hay que ver bien que carajo quiere hacer
 class npc_gunship_portal : public CreatureScript
 {
     public:
@@ -2400,7 +2436,8 @@ class npc_gunship_portal : public CreatureScript
         }
 };
 
-
+// ***** OJO *****
+// A este trigger hay que ponerle atencion para hacer bien su funcion
 class npc_gunship_trigger : public CreatureScript
 {
     public:
@@ -2448,8 +2485,11 @@ class npc_gunship_trigger : public CreatureScript
         }
 };
 
-/* ----------------------------------- Rampart of Skulls NPCs ----------------------------------- */
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* ---------------------------------------      TRASH!!! LO GUAPO        ----------------------------------------------- */
+/* --------------------------------------------------------------------------------------------------------------------- */
 
+// La muralla de las calaveras <-------------- Trashmob desde aqui (A REVISAR *****OJO****)
 /* Kor'kron Primalist  37030*/
 class npc_korkron_primalist: public CreatureScript
 {
@@ -2743,7 +2783,7 @@ class npc_skybreaker_vindicator: public CreatureScript
                             Talk(SAY_FIRST_SQUAD_RESCUED_ALLIANCE_0);
                             break;
                         case EVENT_FIRST_SQUAD_ASSISTED_2:
-                            if (Creature* tempUnit = me->FindNearestCreature(NPC_GB_SKYBREAKER_SORCERER, 120.0f, true))
+                            if (Creature* tempUnit = me->FindNearestCreature(NPC_SKYBREAKER_SORCERER, 120.0f, true))
                             {
                                 tempUnit->AI()->Talk(SAY_FIRST_SQUAD_RESCUED_ALLIANCE_1);
                                 tempUnit->AI()->Talk(SAY_SUMMON_BATTLE_STANDARD);
@@ -3001,8 +3041,13 @@ class npc_icc_spire_frostwyrm: public CreatureScript
             return new npc_icc_spire_frostwyrmAI(pCreature);
         }
 };
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* ----------------------------------------------      PARA LOS FROSTWYRMS        ------------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------------------------------- */
 
-/* ---------------------------------- AreaTrigger Scripts ------------------------------------- */
+// ***** OJO ***** aqui con los areatriggers para que bajen los frostwyrms
+// Esta parte hay q mirar luego a ver que tal va
+
 class at_icc_land_frostwyrm : public AreaTriggerScript
 {
     public:
@@ -3027,6 +3072,11 @@ class at_icc_land_frostwyrm : public AreaTriggerScript
         }
 };
 
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* ------------------------------------------      PARA LA NAVE        ------------------------------------------------- */
+/* --------------------------------------------------------------------------------------------------------------------- */
+
+// ******* OJO ******** aqui esta lo chungo <----- sobre el transporte que se mueve y tal
 /* transport script */
 class transport_gunship : public TransportScript
 {
@@ -3065,6 +3115,9 @@ class transport_gunship : public TransportScript
         }
 };
 
+/* --------------------------------------------------------------------------------------------------------------------- */
+/* ------------------------------------------      SCRIPT SPELLS        ------------------------------------------------ */
+/* --------------------------------------------------------------------------------------------------------------------- */
 /* Remove Rocket Pack - 70713 */
 class spell_icc_remove_rocket_pack : public SpellScriptLoader
 {
@@ -3275,7 +3328,7 @@ class spell_rocket_pack : public SpellScriptLoader
         }
 };
 
-void AddSC_boss_gunship_battle()
+void AddSC_boss_gunship_battle_wowrean()
 {
     new npc_muradin_gunship();
     new npc_saurfang_gunship();
