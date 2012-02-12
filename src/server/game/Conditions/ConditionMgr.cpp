@@ -36,7 +36,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
     // object not present, return false
     if (!object)
     {
-        sLog->outDebug(LOG_FILTER_CONDITIONSYS, "Condition object not found");
+        sLog->outDebug(LOG_FILTER_CONDITIONSYS, "Condition object not found for condition (Entry: %u Type: %u Group: %u)", mSourceEntry, mSourceType, mSourceGroup);
         return false;
     }
     bool condMeets = false;
@@ -236,6 +236,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
                         condMeets = unit->getLevel() <= mConditionValue1;
                         break;
                 }
+                condMeets = CompareValues(static_cast<ComparisionType>(mConditionValue2), static_cast<uint32>(unit->getLevel()), mConditionValue1);
             }
             break;
         }
@@ -255,6 +256,92 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
             condMeets = GetClosestGameObjectWithEntry(object, mConditionValue1, (float)mConditionValue2) ? true : false;
             break;
         }
+        case CONDITION_OBJECT_ENTRY:
+        {
+            if (object->GetTypeId() == mConditionValue1)
+                condMeets = (!mConditionValue2) || (object->GetEntry() == mConditionValue2);         
+            break;
+        }
+        case CONDITION_TYPE_MASK:
+        {
+            condMeets = object->isType(mConditionValue1);
+            break;
+        }
+        case CONDITION_RELATION_TO:
+        {
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[mConditionValue1])
+            {
+                Unit* toUnit = toObject->ToUnit();
+                Unit* unit = object->ToUnit();
+                if (toUnit && unit)
+                {
+                    switch (mConditionValue2)
+                    {
+                        case RELATION_SELF:
+                            condMeets = unit == toUnit;
+                            break;
+                        case RELATION_IN_PARTY:
+                            condMeets = unit->IsInPartyWith(toUnit);
+                            break;
+                        case RELATION_IN_RAID_OR_PARTY:
+                            condMeets = unit->IsInRaidWith(toUnit);
+                            break;
+                        case RELATION_OWNED_BY:
+                            condMeets = unit->GetOwnerGUID() == toUnit->GetGUID();
+                            break;
+                        case RELATION_PASSENGER_OF:
+                            condMeets = unit->IsOnVehicle(toUnit);
+                            break;
+                    }
+                }
+            }
+            break;
+        }
+        case CONDITION_REACTION_TO:
+        {
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[mConditionValue1])
+            {
+                Unit* toUnit = toObject->ToUnit();
+                Unit* unit = object->ToUnit();
+                if (toUnit && unit)
+                    condMeets = (1 << unit->GetReactionTo(toUnit)) & mConditionValue2;
+            }
+            break;
+        }
+        case CONDITION_DISTANCE_TO:
+        {
+            if (WorldObject* toObject = sourceInfo.mConditionTargets[mConditionValue1])
+                condMeets = CompareValues(static_cast<ComparisionType>(mConditionValue3), object->GetDistance(toObject), static_cast<float>(mConditionValue2));
+            break;
+        }
+        case CONDITION_ALIVE:
+        {
+            if (Unit* unit = object->ToUnit())
+                condMeets = unit->isAlive();
+            break;
+        }
+        case CONDITION_HP_VAL:
+        {
+            if (Unit* unit = object->ToUnit())
+                condMeets = CompareValues(static_cast<ComparisionType>(mConditionValue2), unit->GetHealth(), static_cast<uint32>(mConditionValue1));
+            break;
+        }
+        case CONDITION_HP_PCT:
+        {
+            if (Unit* unit = object->ToUnit())
+                condMeets = CompareValues(static_cast<ComparisionType>(mConditionValue2), unit->GetHealthPct(), static_cast<float>(mConditionValue1));
+            break;
+        }
+        case CONDITION_WORLD_STATE:
+        {
+            condMeets = mConditionValue2 == sWorld->getWorldState(mConditionValue1);
+            break;
+        }
+        case CONDITION_PHASEMASK:
+        {
+            condMeets = object->GetPhaseMask() & mConditionValue1;
+            break;
+        }
         default:
             condMeets = false;
             break;
@@ -268,6 +355,20 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
 
     bool script = sScriptMgr->OnConditionCheck(this, sourceInfo); // Returns true by default.
     return condMeets && script;
+}
+
+uint32 Condition::GetMaxAvailableConditionTargets()
+{
+    // returns number of targets which are available for given source type
+    switch(mSourceType)
+    {
+        case CONDITION_SOURCE_TYPE_SPELL:
+            return 2;
+		case CONDITION_SOURCE_TYPE_SMART_EVENT:
+			return 2;
+        default:
+            return 1;
+    }
 }
 
 ConditionMgr::ConditionMgr()
@@ -1201,6 +1302,12 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
         return false;
     }
 
+    if (cond->mConditionTarget >= cond->GetMaxAvailableConditionTargets())
+    {
+        sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
+        return false;
+    }
+
     switch (cond->mConditionType)
     {
         case CONDITION_AURA:
@@ -1517,7 +1624,7 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
         }
         case CONDITION_LEVEL:
         {
-            if (cond->mConditionValue2 >= LVL_COND_MAX)
+            if (cond->mConditionValue2 >= COMP_TYPE_MAX)
             {
                 sLog->outErrorDb("Level condition has invalid option (%u), skipped", cond->mConditionValue2);
                 return false;
@@ -1564,9 +1671,168 @@ bool ConditionMgr::isConditionTypeValid(Condition* cond)
                 sLog->outErrorDb("NearGameObject condition has useless data in value3 (%u)!", cond->mConditionValue3);
             break;
         }
+        case CONDITION_OBJECT_ENTRY:
+        {
+            switch (cond->mConditionValue1)
+            {
+                case TYPEID_UNIT:
+                    if (cond->mConditionValue2 && !sObjectMgr->GetCreatureTemplate(cond->mConditionValue2))
+                    {
+                        sLog->outErrorDb("ObjectEntry condition has non existing creature template entry  (%u), skipped", cond->mConditionValue2);
+                        return false;
+                    }
+                    break;
+                case TYPEID_GAMEOBJECT:
+                    if (cond->mConditionValue2 && !sObjectMgr->GetGameObjectTemplate(cond->mConditionValue2))
+                    {
+                        sLog->outErrorDb("ObjectEntry condition has non existing game object template entry  (%u), skipped", cond->mConditionValue2);
+                        return false;
+                    }
+                    break;
+                case TYPEID_PLAYER:
+                case TYPEID_CORPSE:
+                    if (cond->mConditionValue2)
+                        sLog->outErrorDb("ObjectEntry condition has useless data in value2 (%u)!", cond->mConditionValue2);
+                    break;
+                default:
+                    sLog->outErrorDb("ObjectEntry condition has wrong typeid set (%u), skipped", cond->mConditionValue1);
+                    return false;
+            }
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("ObjectEntry condition has useless data in value3 (%u)!", cond->mConditionValue3);        
+            break;
+        }
+        case CONDITION_TYPE_MASK:
+        {
+            if (!cond->mConditionValue1 || (cond->mConditionValue1 & ~(TYPEMASK_UNIT | TYPEMASK_PLAYER | TYPEMASK_GAMEOBJECT | TYPEMASK_CORPSE)))
+            {
+                sLog->outErrorDb("TypeMask condition has invalid typemask set (%u), skipped", cond->mConditionValue2);
+                return false;
+            }
+            if (cond->mConditionValue2)
+                sLog->outErrorDb("TypeMask condition has useless data in value2 (%u)!", cond->mConditionValue2);
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("TypeMask condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
+        case CONDITION_RELATION_TO:
+        {
+            if (cond->mConditionValue1 >= cond->GetMaxAvailableConditionTargets())
+            {
+                sLog->outErrorDb("RelationTo condition has invalid ConditionValue1(ConditionTarget selection) (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue1 == cond->mConditionTarget)
+            {
+                sLog->outErrorDb("RelationTo condition has ConditionValue1(ConditionTarget selection) set to self (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue2 >= RELATION_MAX)
+            {
+                sLog->outErrorDb("RelationTo condition has invalid ConditionValue2(RelationType) (%u), skipped", cond->mConditionValue2);
+                return false;
+            }
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("RelationTo condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
+        case CONDITION_REACTION_TO:
+        {
+            if (cond->mConditionValue1 >= cond->GetMaxAvailableConditionTargets())
+            {
+                sLog->outErrorDb("ReactionTo condition has invalid ConditionValue1(ConditionTarget selection) (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue1 == cond->mConditionTarget)
+            {
+                sLog->outErrorDb("ReactionTo condition has ConditionValue1(ConditionTarget selection) set to self (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (!cond->mConditionValue2)
+            {
+                sLog->outErrorDb("mConditionValue2 condition has invalid ConditionValue2(rankMask) (%u), skipped", cond->mConditionValue2);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_DISTANCE_TO:
+        {
+            if (cond->mConditionValue1 >= cond->GetMaxAvailableConditionTargets())
+            {
+                sLog->outErrorDb("DistanceTo condition has invalid ConditionValue1(ConditionTarget selection) (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue1 == cond->mConditionTarget)
+            {
+                sLog->outErrorDb("DistanceTo condition has ConditionValue1(ConditionTarget selection) set to self (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue3 >= COMP_TYPE_MAX)
+            {
+                sLog->outErrorDb("DistanceTo condition has invalid ComparisionType (%u), skipped", cond->mConditionValue3);
+                return false;
+            }
+            break;
+        }
+        case CONDITION_ALIVE:
+        {
+            if (cond->mConditionValue1)
+                sLog->outErrorDb("Alive condition has useless data in value1 (%u)!", cond->mConditionValue1);
+            if (cond->mConditionValue2)
+                sLog->outErrorDb("Alive condition has useless data in value2 (%u)!", cond->mConditionValue2);
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("Alive condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
+        case CONDITION_HP_VAL:
+        {
+            if (cond->mConditionValue2 >= COMP_TYPE_MAX)
+            {
+                sLog->outErrorDb("HpVal condition has invalid ComparisionType (%u), skipped", cond->mConditionValue2);
+                return false;
+            }
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("HpVal condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
+        case CONDITION_HP_PCT:
+        {
+            if (cond->mConditionValue1 > 100)
+            {
+                sLog->outErrorDb("HpPct condition has too big percent value (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue2 >= COMP_TYPE_MAX)
+            {
+                sLog->outErrorDb("HpPct condition has invalid ComparisionType (%u), skipped", cond->mConditionValue2);
+                return false;
+            }
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("HpPct condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
         case CONDITION_AREAID:
         case CONDITION_INSTANCE_DATA:
             break;
+        case CONDITION_WORLD_STATE:
+        {
+            if (!sWorld->getWorldState(cond->mConditionValue1))
+            {
+                sLog->outErrorDb("World state condition has non existing world state in value1 (%u), skipped", cond->mConditionValue1);
+                return false;
+            }
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("World state condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
+        case CONDITION_PHASEMASK:
+        {
+            if (cond->mConditionValue2)
+                sLog->outErrorDb("Phasemask condition has useless data in value2 (%u)!", cond->mConditionValue2);
+            if (cond->mConditionValue3)
+                sLog->outErrorDb("Phasemask condition has useless data in value3 (%u)!", cond->mConditionValue3);
+            break;
+        }
         default:
             break;
     }
