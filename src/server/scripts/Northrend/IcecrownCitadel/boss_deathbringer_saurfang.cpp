@@ -251,7 +251,6 @@ class boss_deathbringer_saurfang : public CreatureScript
             void Reset()
             {
                 _Reset();
-                me->SetReactState(REACT_DEFENSIVE);
                 events.SetPhase(PHASE_COMBAT);
                 _frenzied = false;
                 me->SetPower(POWER_ENERGY, 0);
@@ -435,6 +434,8 @@ class boss_deathbringer_saurfang : public CreatureScript
                             events.SetPhase(PHASE_COMBAT);
                             _introDone = true;
                             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+                            me->SetReactState(REACT_AGGRESSIVE);
+                            me->SetInCombatWithZone();
                             break;
                         case EVENT_SUMMON_BLOOD_BEAST:
                             for (uint32 i10 = 0; i10 < 2; ++i10)
@@ -743,7 +744,7 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
             InstanceScript* instance = creature->GetInstanceScript();
             if (instance && instance->GetBossState(DATA_DEATHBRINGER_SAURFANG) != DONE)
             {
-                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "We are ready to go, High Overlord. The Lich King must fall!", 631, -ACTION_START_EVENT);
+                player->ADD_GOSSIP_ITEM(GOSSIP_ICON_CHAT, "Nous sommes pret, Haut seigneur. Le roi-liche doit tomber !", 631, -ACTION_START_EVENT);
                 player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
             }
 
@@ -889,7 +890,7 @@ class npc_muradin_bronzebeard_icc : public CreatureScript
             InstanceScript* instance = creature->GetInstanceScript();
             if (instance && instance->GetBossState(DATA_DEATHBRINGER_SAURFANG) != DONE)
             {
-                player->ADD_GOSSIP_ITEM(0, "Let it begin...", 631, -ACTION_START_EVENT + 1);
+                player->ADD_GOSSIP_ITEM(0, "Allons-y commençons...", 631, -ACTION_START_EVENT + 1);
                 player->SEND_GOSSIP_MENU(DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
             }
 
