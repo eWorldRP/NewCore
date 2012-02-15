@@ -217,27 +217,7 @@ bool Condition::Meets(ConditionSourceInfo& sourceInfo)
         case CONDITION_LEVEL:
         {
             if (Unit* unit = object->ToUnit())
-            {
-                switch (mConditionValue2)
-                {
-                    case LVL_COND_EQ:
-                        condMeets = unit->getLevel() == mConditionValue1;
-                        break;
-                    case LVL_COND_HIGH:
-                        condMeets = unit->getLevel() > mConditionValue1;
-                        break;
-                    case LVL_COND_LOW:
-                        condMeets = unit->getLevel() < mConditionValue1;
-                        break;
-                    case LVL_COND_HIGH_EQ:
-                        condMeets = unit->getLevel() >= mConditionValue1;
-                        break;
-                    case LVL_COND_LOW_EQ:
-                        condMeets = unit->getLevel() <= mConditionValue1;
-                        break;
-                }
                 condMeets = CompareValues(static_cast<ComparisionType>(ConditionValue2), static_cast<uint32>(unit->getLevel()), ConditionValue1);
-            }
             break;
         }
         case CONDITION_DRUNKENSTATE:
@@ -834,12 +814,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-            
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_DISENCHANT_LOOT_TEMPLATE:
@@ -855,12 +829,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -880,12 +848,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_GAMEOBJECT_LOOT_TEMPLATE:
@@ -901,12 +863,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -926,12 +882,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_MAIL_LOOT_TEMPLATE:
@@ -947,12 +897,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -972,12 +916,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_PICKPOCKETING_LOOT_TEMPLATE:
@@ -993,12 +931,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -1018,12 +950,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_REFERENCE_LOOT_TEMPLATE:
@@ -1039,12 +965,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -1064,12 +984,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_SPELL_LOOT_TEMPLATE:
@@ -1085,12 +999,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!pItemProto && !loot->isReference(cond->SourceEntry))
             {
                 sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, does not exist in `item_template`, ignoring.", cond->SourceType, cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -1162,12 +1070,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceEntry %u in `condition` table, does not exist in `creature_template`, ignoring.", cond->SourceEntry);
                 return false;
             }
-
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_SPELL:
@@ -1176,12 +1078,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
             if (!spellProto)
             {
                 sLog->outErrorDb("SourceEntry %u in `condition` table, does not exist in `spell.dbc`, ignoring.", cond->SourceEntry);
-                return false;
-            }
-
-            if (cond->mConditionTarget > 2)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -1228,12 +1124,6 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                                 ", or the spells are already listed in CONDITION_SOURCE_TYPE_SPELL_SCRIPT_TARGET conditions.", cond->SourceEntry);
                 break;
             }
-
-            if (cond->mConditionTarget > 2)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         }
         case CONDITION_SOURCE_TYPE_QUEST_ACCEPT:
@@ -1242,21 +1132,11 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("CONDITION_SOURCE_TYPE_QUEST_ACCEPT specifies non-existing quest (%u), skipped", cond->SourceEntry);
                 return false;
             }
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         case CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK:
             if (!sObjectMgr->GetQuestTemplate(cond->SourceEntry))
             {
                 sLog->outErrorDb("CONDITION_SOURCE_TYPE_QUEST_SHOW_MARK specifies non-existing quest (%u), skipped", cond->SourceEntry);
-                return false;
-            }
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
                 return false;
             }
             break;
@@ -1272,21 +1152,10 @@ bool ConditionMgr::isSourceTypeValid(Condition* cond)
                 sLog->outErrorDb("SourceEntry %u in `condition` table, does not exist in `spell.dbc`, ignoring.", cond->SourceEntry);
                 return false;
             }
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
             break;
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU:
         case CONDITION_SOURCE_TYPE_GOSSIP_MENU_OPTION:
         case CONDITION_SOURCE_TYPE_SMART_EVENT:
-            if (cond->mConditionTarget)
-            {
-                sLog->outErrorDb("SourceType %u, SourceEntry %u in `condition` table, has incorrect ConditionTarget set, ignoring.", cond->mSourceType, cond->mSourceEntry);
-                return false;
-            }
-            break;
         case CONDITION_SOURCE_TYPE_NONE:
         default:
             break;

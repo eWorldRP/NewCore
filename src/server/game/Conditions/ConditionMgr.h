@@ -138,24 +138,6 @@ struct ConditionSourceInfo
     }
 };
 
-enum
-{
-    MAX_CONDITION_TARGETS = 3,
-};
-
-struct ConditionSourceInfo
-{
-    WorldObject* mConditionTargets[MAX_CONDITION_TARGETS];
-    Condition* mLastFailedCondition;
-    ConditionSourceInfo(WorldObject* target0, WorldObject* target1 = NULL, WorldObject* target2 = NULL)
-    {
-        mConditionTargets[0] = target0;
-        mConditionTargets[1] = target1;
-        mConditionTargets[2] = target2;
-        mLastFailedCondition = NULL;
-    }
-};
-
 struct Condition
 {
     ConditionSourceType     SourceType;        //SourceTypeOrReferenceId
