@@ -29,4 +29,49 @@ INSERT `locales_creature_text` (`entry`,`groupid`,`id`, `text_loc1`, `text_loc2`
 (29306,3,1,NULL,'TUEZ-LES TOUS !',NULL,NULL,NULL,NULL,NULL,NULL),
 (29306,3,2,NULL,'Dites bonjour à mon GRAND ami !',NULL,NULL,NULL,NULL,NULL,NULL),
 (29306,4,0,NULL,'Après ça il restera plus rien !',NULL,NULL,NULL,NULL,NULL,NULL),
-(29306,5,0,NULL,'Tu veux voir la puissance ? Je vais te montrer la PUISSANCE !',NULL,NULL,NULL,NULL,NULL,NULL);
+(29306,5,0,NULL,'Tu veux voir la puissance ? Je vais te montrer la PUISSANCE !',NULL,NULL,NULL,NULL,NULL,NULL),
+
+
+-- AZJOL'NERUB
+
+-- Prince Taldaram
+(29308,0,0,NULL,'Je ferai un festin de vos restes !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,1,0,NULL,'Bin-dor''el',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,1,1,NULL,'Je ne bois jamais de sang avant qu''il ne soit à maturité.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,1,2,NULL,'Un dernier baiser.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,2,0,NULL,'J''ai toujours faim. Toujours... soif...',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,3,0,NULL,'Si... appétissant.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,3,1,NULL,'Du sang frais et chaud... Ça faisait si longtemps.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,4,0,NULL,'Votre coeur qui bat, quelle douce musique à mes oreilles.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29308,4,1,NULL,'Je ne suis nulle part... Je suis partout. Je suis le spectateur invisible.',NULL,NULL,NULL,NULL,NULL,NULL),
+-- Elder Nadox
+(29309,0,0,NULL,'Les secrets des profondeurs resteront scellés.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,1,0,NULL,'Reposez enfin dans les ténèbres gelées.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,1,1,NULL,'Pour le roi-liche !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,1,2,NULL,'Nous serons peut-être bientôt allié.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,2,0,NULL,'Maître... mon service est-il... terminé ?',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,3,0,NULL,'Les petits ne doivent pas souffrir de la faim...',NULL,NULL,NULL,NULL,NULL,NULL),
+(29309,3,1,NULL,'Shhhad ak kereeesshh chak-k-k !',NULL,NULL,NULL,NULL,NULL,NULL),
+-- Herald Volazj
+(29311,0,0,NULL,'Shgla''yos plahf mh''naus.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,1,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,1,1,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,1,2,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,2,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,2,1,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+(29311,3,0,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL),
+-- Jedoga Shadowseeker
+(29310,0,0,NULL,'Ces salles sont sacrées ! Votre intrusion sera punie de mort !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,1,0,NULL,'Qui d''entre vous est dévoué ?',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,1,1,NULL,'Vous, là ! Avancez !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,2,0,NULL,'Yogg-Saron ! Accorde-moi ta puissance !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,2,1,NULL,'Maître, un présent pour vous !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,3,0,NULL,'Gloire à Yogg-Saron !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,3,1,NULL,'Vous n''êtes pas digne.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,3,2,NULL,'Debout ! Vous n''avez pas assez souffert.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,4,0,NULL,'Ne croyez pas que votre sacrilège... restera... impuni.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,5,0,NULL,'Les éléments eux-mêmes se soulèveront contre le monde civilisé ! Seuls les fidèles seront épargnés !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,5,1,NULL,'Vous pouvez obtenir l''immortalité, mais seulement en vous dévouant corps et âme à Yogg-Saron !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,5,2,NULL,'Ici-même, aux abords de son domaine, vous sentirez des pouvoirs dépassant vos imaginations !',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,5,3,NULL,'Vous avez fait un long et périlleux voyage pour venir ici ! Votre dévotion sera récompensée.',NULL,NULL,NULL,NULL,NULL,NULL),
+(29310,5,4,NULL,'Les fidèles seront exaltés ! Mais notre oeuvre n''est pas terminée. Nous devons poursuivre tant qu''Azeroth n''est pas entièrement dans son ombre !',NULL,NULL,NULL,NULL,NULL,NULL);
