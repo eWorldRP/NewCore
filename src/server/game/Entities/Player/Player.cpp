@@ -25137,6 +25137,16 @@ void Player::_SaveInstanceTimeRestrictions(SQLTransaction& trans)
     }
 }
 
+bool Player::IsInWhisperWhiteList(uint64 guid)
+{
+    for (WhisperListContainer::const_iterator itr = WhisperList.begin(); itr != WhisperList.end(); ++itr)
+    {
+        if (*itr == guid)
+            return true;
+    }
+    return false;
+}
+
 void Player::InitWowarmoryFeeds() {
     // Clear feeds
     m_wowarmory_feeds.clear();
@@ -25174,14 +25184,4 @@ void Player::CreateWowarmoryFeed(uint32 type, uint32 data, uint32 item_guid, uin
     feed.date = time(NULL);
     sLog->outDebug(LOG_FILTER_UNITS, "[Wowarmory]: create wowarmory feed (GUID: %u, type: %d, data: %u).", feed.guid, feed.type, feed.data);
     m_wowarmory_feeds.push_back(feed);
-}
-
-bool Player::IsInWhisperWhiteList(uint64 guid)
-{
-    for (WhisperListContainer::const_iterator itr = WhisperList.begin(); itr != WhisperList.end(); ++itr)
-    {
-        if (*itr == guid)
-            return true;
-    }
-    return false;
 }
