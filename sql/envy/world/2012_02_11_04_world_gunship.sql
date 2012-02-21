@@ -328,3 +328,4 @@ UPDATE item_template SET ScriptName = 'item_icc_rocket_pack' WHERE entry = 49278
 
 -- Zafod Boombox (37184) giver of jetpack
 UPDATE `creature_template` SET `npcflag`=1 WHERE `entry`=37184;
+
