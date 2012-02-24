@@ -2666,9 +2666,18 @@ void SpellMgr::UnloadSpellInfoStore()
     for (uint32 i = 0; i < mSpellInfoMap.size(); ++i)
     {
         if (mSpellInfoMap[i])
-          delete mSpellInfoMap[i];
+            delete mSpellInfoMap[i];
     }
     mSpellInfoMap.clear();
+}
+
+void SpellMgr::UnloadSpellInfoImplicitTargetConditionLists()
+{
+    for (uint32 i = 0; i < mSpellInfoMap.size(); ++i)
+    {
+        if (mSpellInfoMap[i])
+            mSpellInfoMap[i]->_UnloadImplicitTargetConditionLists();
+    }
 }
 
 void SpellMgr::LoadSpellCustomAttr()
@@ -3177,6 +3186,10 @@ void SpellMgr::LoadDbcDataCorrections()
                 break;
             case 51852: // The Eye of Acherus (no spawn in phase 2 in db)
                 spellInfo->EffectMiscValue[0] |= 1;
+                break;
+            case 46363: // Midsummer - Beam Attack against Ahune
+                spellInfo->EffectImplicitTargetA[0] = TARGET_SRC_CASTER;
+                spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_TARGET_ANY;
                 break;
             case 29809: // Desecration Arm - 36 instead of 37 - typo? :/
                 spellInfo->EffectRadiusIndex[0] = EFFECT_RADIUS_7_YARDS;
