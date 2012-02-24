@@ -183,7 +183,6 @@ class boss_sindragosa : public CreatureScript
             void Reset()
             {
                 BossAI::Reset();
-                me->SetReactState(REACT_DEFENSIVE);
                 DoCast(me, SPELL_TANK_MARKER, true);
                 events.ScheduleEvent(EVENT_BERSERK, 600000);
                 events.ScheduleEvent(EVENT_CLEAVE, 10000, EVENT_GROUP_LAND_PHASE);
@@ -294,10 +293,13 @@ class boss_sindragosa : public CreatureScript
                     case POINT_LAND:
                         me->SetFlying(false);
                         me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
-                        me->SetReactState(REACT_DEFENSIVE);
+                        me->SetReactState(REACT_AGGRESSIVE);
                         if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
                             me->GetMotionMaster()->MovementExpired();
-                        DoStartMovement(me->getVictim());
+                        if (Unit* target = me->getVictim())
+                            DoStartMovement(target);
+                        else if(Unit* target = SelectTarget(SELECT_TARGET_RANDOM,0,300.0f,true))
+                            DoStartMovement(target);
                         _isInAirPhase = false;
                         // trigger Asphyxiation
                         summons.DoAction(NPC_ICE_TOMB, ACTION_TRIGGER_ASPHYXIATION);
@@ -597,13 +599,22 @@ class npc_spinestalker : public CreatureScript
             {
             }
 
+            void InitializeAI()
+            {
+                // Increase add count
+                if (!me->isDead())
+                {
+                    _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, 1);  // this cannot be in Reset because reset also happens on evade
+                    Reset();
+                }
+            }
+
             void Reset()
             {
                 _events.Reset();
                 _events.ScheduleEvent(EVENT_BELLOWING_ROAR, urand(20000, 25000));
                 _events.ScheduleEvent(EVENT_CLEAVE_SPINESTALKER, urand(10000, 15000));
                 _events.ScheduleEvent(EVENT_TAIL_SWEEP, urand(8000, 12000));
-                me->SetReactState(REACT_DEFENSIVE);
 
                 if (_instance->GetData(DATA_SPINESTALKER) != 255)
                 {
@@ -654,6 +665,15 @@ class npc_spinestalker : public CreatureScript
                 me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
                 me->SetHomePosition(SpinestalkerLandPos);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE);
+            }
+
+            void MoveInLineOfSight(Unit* who)
+            {
+                if (me->IsWithinDistInMap(who, 20.0f))
+                {
+                    me->SetReactState(REACT_AGGRESSIVE);
+                    me->SetInCombatWithZone();
+                }
             }
 
             void UpdateAI(uint32 const diff)
@@ -712,12 +732,21 @@ class npc_rimefang : public CreatureScript
             {
             }
 
+            void InitializeAI()
+            {
+                // Increase add count
+                if (!me->isDead())
+                {
+                    _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, 1);  // this cannot be in Reset because reset also happens on evade
+                    Reset();
+                }
+            }
+
             void Reset()
             {
                 _events.Reset();
                 _events.ScheduleEvent(EVENT_FROST_BREATH_RIMEFANG, urand(12000, 15000));
                 _events.ScheduleEvent(EVENT_ICY_BLAST, urand(30000, 35000));
-                me->SetReactState(REACT_DEFENSIVE);
                 _icyBlastCounter = 0;
 
                 if (_instance->GetData(DATA_RIMEFANG) != 255)
@@ -769,6 +798,15 @@ class npc_rimefang : public CreatureScript
                 me->RemoveUnitMovementFlag(MOVEMENTFLAG_LEVITATING);
                 me->SetHomePosition(RimefangLandPos);
                 me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
+            }
+
+            void MoveInLineOfSight(Unit* who)
+            {
+                if (me->IsWithinDistInMap(who, 20.0f))
+                {
+                    me->SetReactState(REACT_AGGRESSIVE);
+                    me->SetInCombatWithZone();
+                }
             }
 
             void EnterCombat(Unit* /*victim*/)
@@ -860,7 +898,10 @@ class npc_sindragosa_trash : public CreatureScript
                 _frostwyrmId = (me->GetHomePosition().GetPositionY() < 2484.35f) ? DATA_RIMEFANG : DATA_SPINESTALKER;
                 // Increase add count
                 if (!me->isDead())
+                {
                     _instance->SetData(_frostwyrmId, 1);  // this cannot be in Reset because reset also happens on evade
+                    Reset();
+                }
             }
 
             void Reset()
@@ -1344,6 +1385,9 @@ class spell_frostwarden_handler_order_whelp : public SpellScriptLoader
                         ++itr;
                 }
 
+                if (unitList.empty())
+                    return;
+
                 Unit* target = SelectRandomContainerElement(unitList);
                 unitList.clear();
                 unitList.push_back(target);
@@ -1356,7 +1400,10 @@ class spell_frostwarden_handler_order_whelp : public SpellScriptLoader
                 std::list<Creature*> unitList;
                 GetCreatureListWithEntryInGrid(unitList, GetCaster(), NPC_FROSTWING_WHELP, 150.0f);
                 if (Creature* creature = GetCaster()->ToCreature())
-                    unitList.remove_if (OrderWhelpTargetSelector(creature));
+                    unitList.remove_if(OrderWhelpTargetSelector(creature));
+
+                if (unitList.empty())
+                    return;
 
                 SelectRandomContainerElement(unitList)->CastSpell(GetHitUnit(), uint32(GetEffectValue()), true);
             }
