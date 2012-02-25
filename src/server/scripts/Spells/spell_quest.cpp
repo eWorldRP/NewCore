@@ -1128,7 +1128,7 @@ class spell_q12277_wintergarde_mine_explosion : public SpellScriptLoader
  
                 void Register()
                 {
-                    OnEffectHit += SpellEffectFn(spell_q12277_wintergarde_mine_explosion_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
+                    OnEffectHitTarget += SpellEffectFn(spell_q12277_wintergarde_mine_explosion_SpellScript::HandleDummy, EFFECT_0, SPELL_EFFECT_DUMMY);
                 }
         };
  
