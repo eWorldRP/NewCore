@@ -80,7 +80,7 @@ static Position Loc[]=
     {-228.251511f, 2187.282471f, 79.762840f, 0.0f}
 };
 
-#define GOSSIP_ITEM_START "Commencer le combat."
+#define GOSSIP_ITEM_START "Begin the battle."
 
 void SetInCombat(Creature* self)
 {
