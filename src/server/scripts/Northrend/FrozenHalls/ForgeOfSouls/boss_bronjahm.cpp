@@ -210,9 +210,6 @@ class mob_corrupted_soul_fragment : public CreatureScript
 
             void MovementInform(uint32 type, uint32 id)
             {
-                if (type != CHASE_MOTION_TYPE)
-                    return;
-
                 if (instance)
                 {
                     if (TempSummon* summ = me->ToTempSummon())
@@ -222,9 +219,13 @@ class mob_corrupted_soul_fragment : public CreatureScript
                             return;
 
                         if (Creature* bronjahm = ObjectAccessor::GetCreature(*me, BronjahmGUID))
-                            me->CastSpell(bronjahm, SPELL_CONSUME_SOUL, true);
-
-                        summ->UnSummon();
+                        {
+                            if(me->GetDistance2d(bronjahm->GetPositionX(), bronjahm->GetPositionY()) <= 2.0f) 
+                            {
+                                me->CastSpell(bronjahm, SPELL_CONSUME_SOUL, true);
+                                summ->UnSummon();
+                            }
+                        }
                     }
                 }
             }
