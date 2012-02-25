@@ -126,15 +126,6 @@ class boss_bronjahm : public CreatureScript
                 }
             }
 
-            void JustSummoned(Creature* summon)
-            {
-                summons.Summon(summon);
-                summon->SetReactState(REACT_PASSIVE);
-                summon->GetMotionMaster()->Clear();
-                summon->GetMotionMaster()->MoveFollow(me, me->GetObjectSize(), 0.0f);
-                summon->CastSpell(summon, SPELL_PURPLE_BANISH_VISUAL, true);
-            }
-
             void UpdateAI(const uint32 diff)
             {
                 if (!UpdateVictim())
@@ -201,6 +192,20 @@ class mob_corrupted_soul_fragment : public CreatureScript
             mob_corrupted_soul_fragmentAI(Creature* creature) : ScriptedAI(creature)
             {
                 instance = me->GetInstanceScript();
+            }
+
+            void Reset()
+            {
+                if(me->isAlive())
+                {
+                    if (Creature* bronjahm = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_BRONJAHM)))
+                    {
+                        me->SetReactState(REACT_PASSIVE);
+                        me->GetMotionMaster()->Clear();
+                        me->GetMotionMaster()->MoveFollow(bronjahm, bronjahm->GetObjectSize(), 0.0f);
+                        me->CastSpell(me, SPELL_PURPLE_BANISH_VISUAL, true);
+                    }
+                }
             }
 
             void MovementInform(uint32 type, uint32 id)
