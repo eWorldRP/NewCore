@@ -828,7 +828,7 @@ void Spell::SelectEffectImplicitTargets(SpellEffIndex effIndex, SpellImplicitTar
                             m_targets.SetSrc(*m_caster);
                             break;
                         default:
-                            ASSERT("Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT_SRC");
+                            ASSERT(false && "Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT_SRC");
                             break;
                     }
                     break;
@@ -845,7 +845,7 @@ void Spell::SelectEffectImplicitTargets(SpellEffIndex effIndex, SpellImplicitTar
                              SelectImplicitDestDestTargets(effIndex, targetType);
                              break;
                          default:
-                             ASSERT("Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT_DEST");
+                             ASSERT(false && "Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT_DEST");
                              break;
                      }
                      break;
@@ -859,7 +859,7 @@ void Spell::SelectEffectImplicitTargets(SpellEffIndex effIndex, SpellImplicitTar
                             SelectImplicitTargetObjectTargets(effIndex, targetType);
                             break;
                         default:
-                            ASSERT("Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT");
+                            ASSERT(false && "Spell::SelectEffectImplicitTargets: received not implemented select target reference type for TARGET_TYPE_OBJECT");
                             break;
                     }
                     break;
@@ -2863,34 +2863,6 @@ bool Spell::UpdateChanneledTargetList()
     return channelTargetEffectMask == 0;
 }
 
-// Helper for Chain Healing
-// Spell target first
-// Raidmates then descending by injury suffered (MaxHealth - Health)
-// Other players/mobs then descending by injury suffered (MaxHealth - Health)
-struct ChainHealingOrder : public std::binary_function<const Unit*, const Unit*, bool>
-{
-    const Unit* MainTarget;
-    ChainHealingOrder(Unit const* Target) : MainTarget(Target) {};
-    // functor for operator ">"
-    bool operator()(Unit const* _Left, Unit const* _Right) const
-    {
-        return (ChainHealingHash(_Left) < ChainHealingHash(_Right));
-    }
-
-    int32 ChainHealingHash(Unit const* Target) const
-    {
-        if (Target->GetTypeId() == TYPEID_PLAYER && MainTarget->GetTypeId() == TYPEID_PLAYER && Target->ToPlayer()->IsInSameRaidWith(MainTarget->ToPlayer()))
-        {
-            if (Target->IsFullHealth())
-                return 40000;
-            else
-                return 20000 - Target->GetMaxHealth() + Target->GetHealth();
-        }
-        else
-            return 40000 - Target->GetMaxHealth() + Target->GetHealth();
-    }
-};
-
 void Spell::prepare(SpellCastTargets const* targets, AuraEffect const* triggeredByAura)
 {
     if (m_CastItem)
@@ -4787,11 +4759,16 @@ SpellCastResult Spell::CheckCast(bool strict)
             // TODO: using WorldSession::SendNotification is not blizzlike
             if (Player* playerCaster = m_caster->ToPlayer())
             {
-                if (playerCaster->GetSession() && condInfo.mLastFailedCondition
+                if (playerCaster->GetSession()
                     && condInfo.mLastFailedCondition->ErrorTextId)
+                {
                     playerCaster->GetSession()->SendNotification(condInfo.mLastFailedCondition->ErrorTextId);
+                    return SPELL_FAILED_DONT_REPORT;
+                }
             }
-            return SPELL_FAILED_DONT_REPORT;
+            if (!condInfo.mLastFailedCondition->ConditionTarget)
+                return SPELL_FAILED_CASTER_AURASTATE;
+            return SPELL_FAILED_BAD_TARGETS;
         }
     }
 
@@ -5095,7 +5072,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                 if (creature->GetCreatureType() != CREATURE_TYPE_CRITTER && !creature->loot.isLooted())
                     return SPELL_FAILED_TARGET_NOT_LOOTED;
 
-                uint32 skill = creature->GetCreatureInfo()->GetRequiredLootSkill();
+                uint32 skill = creature->GetCreatureTemplate()->GetRequiredLootSkill();
 
                 int32 skillValue = m_caster->ToPlayer()->GetSkillValue(skill);
                 int32 TargetLevel = m_targets.GetUnitTarget()->getLevel();
@@ -5363,7 +5340,7 @@ SpellCastResult Spell::CheckCast(bool strict)
                             return SPELL_FAILED_HIGHLEVEL;
 
                         // use SMSG_PET_TAME_FAILURE?
-                        if (!target->GetCreatureInfo()->isTameable (m_caster->ToPlayer()->CanTameExoticPets()))
+                        if (!target->GetCreatureTemplate()->isTameable (m_caster->ToPlayer()->CanTameExoticPets()))
                             return SPELL_FAILED_BAD_TARGETS;
 
                         if (m_caster->GetPetGUID())
@@ -5556,16 +5533,11 @@ SpellCastResult Spell::CheckPetCast(Unit* target)
     if (!target && m_targets.GetUnitTarget())
         target = m_targets.GetUnitTarget();
 
-    for (uint32 i = 0; i < MAX_SPELL_EFFECTS; ++i)
+    if (m_spellInfo->NeedsExplicitUnitTarget())
     {
-        if (m_spellInfo->Effects[i].TargetA.GetType() == TARGET_TYPE_UNIT_TARGET
-            || m_spellInfo->Effects[i].TargetA.GetType() == TARGET_TYPE_DEST_TARGET)
-        {
-            if (!target)
-                return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
-            m_targets.SetUnitTarget(target);
-            break;
-        }
+        if (!target)
+            return SPELL_FAILED_BAD_IMPLICIT_TARGETS;
+        m_targets.SetUnitTarget(target);
     }
 
     // cooldown

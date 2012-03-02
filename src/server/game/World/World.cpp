@@ -1674,6 +1674,9 @@ void World::SetInitialWorldSettings()
     sLog->outString("Loading Creature Texts locales...");
     sCreatureTextMgr->LoadCreatureTextLocales();
 
+    sLog->outString("Loading Creature Text Locales...");
+    sCreatureTextMgr->LoadCreatureTextLocales();
+
     sLog->outString("Initializing Scripts...");
     sScriptMgr->Initialize();
 
@@ -1765,6 +1768,9 @@ void World::SetInitialWorldSettings()
     ///- Initialize Warden
     sLog->outString("Loading Warden Checks..." );
     sWardenCheckMgr->LoadWardenChecks();
+
+    sLog->outString("Loading Warden Action Overrides..." );
+    sWardenCheckMgr->LoadWardenOverrides();
 
     sLog->outString("Deleting expired bans...");
     LoginDatabase.Execute("DELETE FROM ip_banned WHERE unbandate <= UNIX_TIMESTAMP() AND unbandate<>bandate");
