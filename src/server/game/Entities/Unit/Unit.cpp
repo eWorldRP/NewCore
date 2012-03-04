@@ -12714,7 +12714,16 @@ void Unit::setDeathState(DeathState s)
         // remove aurastates allowing special moves
         ClearAllReactives();
         ClearDiminishings();
-        GetMotionMaster()->Clear(false);
+// patch hackfix call pet con pet morti
+//      GetMotionMaster()->Clear(false);
+        if(this->isPet())
+        {
+            if(this->ToPet()->getPetType() != HUNTER_PET)
+                GetMotionMaster()->Clear(false);
+        }
+        else
+            GetMotionMaster()->Clear(false);
+//
         GetMotionMaster()->MoveIdle();
         StopMoving();
         // without this when removing IncreaseMaxHealth aura player may stuck with 1 hp
