@@ -90,7 +90,16 @@ UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `Health_mod` 
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `Health_mod` = 86.189, `lootid` = 0, `mechanic_immune_mask` = 650854235, `ScriptName` = 'npc_apothecary_baxter' WHERE `entry` = 36565;
 UPDATE `creature_template` SET `faction_A` = 35, `faction_H` = 35, `Health_mod` = 86.189, `lootid` = 36296, `equipment_id` = 128, `mechanic_immune_mask` = 536870917, `flags_extra` = 256, `ScriptName` = 'npc_apothecary_frye' WHERE `entry` = 36272;
 UPDATE `creature_template` SET `faction_A` = 16, `faction_H` = 16, `Health_mod` = 86.189, `mechanic_immune_mask` = 536870917,`ScriptName`='npc_crazed_apothecary' WHERE `entry`=36568;
-
+DELETE FROM `script_texts` WHERE `npc_entry` = 36296;
+INSERT INTO `script_texts` (`npc_entry`, `entry`, `content_default`, `content_loc1`, `content_loc2`, `content_loc3`, `content_loc4`, `content_loc5`, `content_loc6`, `content_loc7`, `content_loc8`, `sound`, `type`, `language`, `emote`, `comment`)
+VALUES
+(36296,-1033020,'Did they bother to tell you who I am and why I am doing this?',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,6,'Hummel - Aggro 1'),
+(36296,-1033021,'...or are they just using you like they do everybody else?',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,1,'Hummel - Aggro 2'),
+(36296,-1033022,'But what does it matter. It is time for this to end.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,5,'Hummel - Aggro 3'),
+(36296,-1033023,'Baxter! Get in there and help! NOW!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'Hummel - Calling Baxter'),
+(36296,-1033024,'It is time, Frye! Attack!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'Hummel - Calling Frye'),
+(36296,-1033025,'Apothecaries! Give your life for the Crown!',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'Hummel - Summon Adds'),
+(36296,-1033026,'...please don\'t think less of me.',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0,'Hummel - Death');
 
 -- ----------------- --
 -- HEADLESS HORSEMAN --

@@ -124,7 +124,7 @@ class boss_varos : public CreatureScript
                     if (Creature* core = me->SummonCreature(NPC_CENTRIFUGE_CORE, corePositions[i]))
                     {
                         core->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_NPC);
-                        core->SetDisplayId(core->GetCreatureInfo()->Modelid2);
+                        core->SetDisplayId(core->GetCreatureTemplate()->Modelid2);
                         core->AddAura(SPELL_CENTRIFUGE_CORE_PASSIVE, core);
                     }
             }
@@ -220,7 +220,8 @@ class npc_azure_ring_captain : public CreatureScript
             {
                 targetGUID = 0;
 
-                me->AddUnitMovementFlag(MOVEMENTFLAG_WALKING | MOVEMENTFLAG_FLYING);
+                me->SetWalk(true);
+                me->AddUnitMovementFlag(MOVEMENTFLAG_FLYING);
                 me->SetReactState(REACT_AGGRESSIVE);
             }
 
@@ -262,7 +263,7 @@ class npc_azure_ring_captain : public CreatureScript
                                 {
                                     me->DespawnOrUnsummon(20*IN_MILLISECONDS);
                                     me->SetReactState(REACT_PASSIVE);
-                                    me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                                    me->SetWalk(false);
                                     me->GetMotionMaster()->MovePoint(ACTION_CALL_DRAGON_EVENT, victim->GetPositionX(), victim->GetPositionY(), victim->GetPositionZ() + 20.0f);
                                     targetGUID = victim->GetGUID();
                                 }

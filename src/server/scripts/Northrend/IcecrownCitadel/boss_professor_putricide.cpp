@@ -190,8 +190,10 @@ class boss_professor_putricide : public CreatureScript
                 summons.DespawnAll();
                 SetPhase(PHASE_COMBAT_1);
                 _experimentState = EXPERIMENT_STATE_OOZE;
+
                 me->SetReactState(REACT_DEFENSIVE);
-                me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                me->SetWalk(false);
+
                 if (me->GetMotionMaster()->GetCurrentMovementGeneratorType() == POINT_MOTION_TYPE)
                     me->GetMotionMaster()->MovementExpired();
 
@@ -230,7 +232,7 @@ class boss_professor_putricide : public CreatureScript
             void JustReachedHome()
             {
                 _JustReachedHome();
-                me->RemoveUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                me->SetWalk(false);
                 if (events.GetPhaseMask() & PHASE_MASK_COMBAT)
                     instance->SetBossState(DATA_PROFESSOR_PUTRICIDE, FAIL);
             }
