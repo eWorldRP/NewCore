@@ -2131,7 +2131,7 @@ bool Player::TeleportTo(uint32 mapid, float x, float y, float z, float orientati
 
 // patch anticrash gunship (temporanea)
 //  if ((GetMapId() == mapid && !m_transport) || (GetTransport() && GetMapId() == 628))
-    if (GetMapId() == mapid)
+    if ((GetMapId() == mapid && !m_transport) || (GetTransport() && GetMapId() == 628) || (GetMapId() == 631))
 //
     {
         //lets reset far teleport flag if it wasn't reset during chained teleports
