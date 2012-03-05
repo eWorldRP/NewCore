@@ -12714,17 +12714,15 @@ void Unit::setDeathState(DeathState s)
         // remove aurastates allowing special moves
         ClearAllReactives();
         ClearDiminishings();
-// patch hackfix call pet con pet morti
+// patch call pet con pet morti
 //      GetMotionMaster()->Clear(false);
-        if(this->isPet())
+//      GetMotionMaster()->MoveIdle();
+        if (!isPet() || (isPet() && IsInWorld()))
         {
-            if(this->ToPet()->getPetType() != HUNTER_PET)
-                GetMotionMaster()->Clear(false);
-        }
-        else
             GetMotionMaster()->Clear(false);
+            GetMotionMaster()->MoveIdle();
+        }
 //
-        GetMotionMaster()->MoveIdle();
         StopMoving();
         // without this when removing IncreaseMaxHealth aura player may stuck with 1 hp
         // do not why since in IncreaseMaxHealth currenthealth is checked
@@ -17019,7 +17017,7 @@ void Unit::ExitVehicle(Position const* exitPosition)
     //! to specify exit coordinates and either store those per passenger, or we need to
     //! init spline movement based on those coordinates in unapply handlers, and
     //! relocate exiting passengers based on Unit::moveSpline data. Either way,
-    //! Coming Soon™
+    //! Coming Soonï¿½
 }
 
 void Unit::_ExitVehicle(Position const* exitPosition)
